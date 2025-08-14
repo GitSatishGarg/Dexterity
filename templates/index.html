@@ -2,9 +2,33 @@
 <html>
 <head>
     <title>Events</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        a.delete-btn {
+            color: red;
+            text-decoration: none;
+        }
+        a.delete-btn:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <h1>Events</h1>
+
+    <!-- Add Event Form -->
     <form action="{{ url_for('add') }}" method="post">
         <input type="text" name="name" placeholder="Event name" required>
         <input type="date" name="date" required>
@@ -13,14 +37,37 @@
         <button type="submit">Add Event</button>
     </form>
 
-    <ul>
-        {% for e in events %}
-            <li>
-                {{ e.name }} on {{ e.date }} at {{ e.location }}
-                {% if e.description %}- {{ e.description }}{% endif %}
-                - <a href="{{ url_for('delete', event_id=e.id) }}">delete</a>
-            </li>
-        {% endfor %}
-    </ul>
+    <!-- Events Table -->
+    {% if events %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Location</th>
+                <th>Description</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in events %}
+            <tr>
+                <td>{{ e.id }}</td>
+                <td>{{ e.name }}</td>
+                <td>{{ e.date }}</td>
+                <td>{{ e.location }}</td>
+                <td>{{ e.description or '-' }}</td>
+                <td>
+                    <a class="delete-btn" href="{{ url_for('delete', event_id=e.id) }}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+        <p>No events yet.</p>
+    {% endif %}
+
 </body>
 </html>
