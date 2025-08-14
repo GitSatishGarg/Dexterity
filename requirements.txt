@@ -1,0 +1,4 @@
+flask
+flask_sqlalchemy
+gunicorn
+psycopg2-binary    # needed only if you’ll use Postgres on Render
