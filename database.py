@@ -1,20 +1,17 @@
 import os
 import psycopg2
-from psycopg.rows import dict_row
+from psycopg2.extras import RealDictCursor
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is not set.")
 
 def get_db_connection():
-    return psycopg.connect(DATABASE_URL, row_factory=dict_row)
+    return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
 
 
 # ---------- INIT DB ----------
 def init_db():
-    """
-    Creates the 'events' table if it doesn't exist.
-    """
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
@@ -63,7 +60,7 @@ def delete_event(event_id):
     conn.close()
 
 
-# ---------- Optional: initialize on import ----------
+# Optional: initialize on import
 try:
     init_db()
     print("✅ Database initialized successfully.")
