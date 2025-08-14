@@ -9,60 +9,38 @@ if not DATABASE_URL:
 def get_db_connection():
     return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
 
-
-# ---------- INIT DB ----------
 def init_db():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS events (
-            id SERIAL PRIMARY KEY,
-            name TEXT NOT NULL,
-            date DATE NOT NULL,
-            location TEXT NOT NULL,
-            description TEXT
-        )
-    """)
-    conn.commit()
-    cur.close()
-    conn.close()
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS events (
+                    id SERIAL PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    date DATE NOT NULL,
+                    location TEXT NOT NULL,
+                    description TEXT
+                )
+            """)
+    print("✅ Database initialized successfully.")
 
-
-# ---------- CRUD FUNCTIONS ----------
 def get_events():
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM events ORDER BY date")
-    events = cur.fetchall()
-    cur.close()
-    conn.close()
-    return events
-
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT * FROM events ORDER BY date")
+            return cur.fetchall()  # Each row is a dict-like object
 
 def add_event(name, date, location, description=None):
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute(
-        "INSERT INTO events (name, date, location, description) VALUES (%s, %s, %s, %s)",
-        (name, date, location, description)
-    )
-    conn.commit()
-    cur.close()
-    conn.close()
-
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO events (name, date, location, description) VALUES (%s, %s, %s, %s)",
+                (name, date, location, description)
+            )
 
 def delete_event(event_id):
-    conn = get_db_connection()
-    cur = conn.cursor()
-    cur.execute("DELETE FROM events WHERE id=%s", (event_id,))
-    conn.commit()
-    cur.close()
-    conn.close()
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("DELETE FROM events WHERE id=%s", (event_id,))
 
-
-# Optional: initialize on import
-try:
-    init_db()
-    print("✅ Database initialized successfully.")
-except Exception as e:
-    print("⚠️ Error initializing database:", e)
+# Initialize DB
+init_db()
