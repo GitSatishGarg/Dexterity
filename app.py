@@ -3,12 +3,8 @@ import database as database
 
 app = Flask(__name__)
 
-# ---------- Optional: ensure DB is initialized before first request ----------
-@app.before_first_request
-def setup():
-    database.init_db()
+# Database is already initialized on import, so no decorator needed
 
-# ---------- ROUTES ----------
 @app.route('/')
 def index():
     events = database.get_events()
@@ -19,7 +15,7 @@ def add():
     name = request.form.get('name')
     date = request.form.get('date')
     location = request.form.get('location')
-    description = request.form.get('description')
+    description = request.form.get('description')  # optional field
     if name and date and location:
         database.add_event(name, date, location, description)
     return redirect(url_for('index'))
