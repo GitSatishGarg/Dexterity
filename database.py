@@ -1,18 +1,13 @@
 import os
-import psycopg2
-from psycopg2.extras import RealDictCursor
+import psycopg
+from psycopg.rows import dict_row
 
-# Get DATABASE_URL from environment
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is not set.")
 
-# ---------- DB CONNECTION ----------
 def get_db_connection():
-    """
-    Returns a new connection to the PostgreSQL database using DATABASE_URL.
-    """
-    return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+    return psycopg.connect(DATABASE_URL, row_factory=dict_row)
 
 
 # ---------- INIT DB ----------
