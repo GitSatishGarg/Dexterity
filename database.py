@@ -1,35 +1,25 @@
 import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
-from urllib.parse import urlparse
 
-
+# Get DATABASE_URL from environment
 DATABASE_URL = os.environ.get("DATABASE_URL")
-
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL environment variable is not set.")
 
-# Parse the DATABASE_URL to get connection params
-url = urlparse(DATABASE_URL)
-DB_NAME = url.path[1:]
-DB_USER = url.username
-DB_PASSWORD = url.password
-DB_HOST = url.hostname
-DB_PORT = url.port
-
-
+# ---------- DB CONNECTION ----------
 def get_db_connection():
-    return psycopg2.connect(
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT,
-        cursor_factory=RealDictCursor
-    )
+    """
+    Returns a new connection to the PostgreSQL database using DATABASE_URL.
+    """
+    return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
 
 
+# ---------- INIT DB ----------
 def init_db():
+    """
+    Creates the 'events' table if it doesn't exist.
+    """
     conn = get_db_connection()
     cur = conn.cursor()
     cur.execute("""
@@ -46,7 +36,39 @@ def init_db():
     conn.close()
 
 
-# Auto-create table when this file is imported
+# ---------- CRUD FUNCTIONS ----------
+def get_events():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM events ORDER BY date")
+    events = cur.fetchall()
+    cur.close()
+    conn.close()
+    return events
+
+
+def add_event(name, date, location, description=None):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO events (name, date, location, description) VALUES (%s, %s, %s, %s)",
+        (name, date, location, description)
+    )
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+def delete_event(event_id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("DELETE FROM events WHERE id=%s", (event_id,))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+# ---------- Optional: initialize on import ----------
 try:
     init_db()
     print("✅ Database initialized successfully.")

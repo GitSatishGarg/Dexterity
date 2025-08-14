@@ -1,11 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for
-import database
+import database as database
 
 app = Flask(__name__)
 
-# Initialize PostgreSQL DB
-database.init_db()
+# ---------- Optional: ensure DB is initialized before first request ----------
+@app.before_first_request
+def setup():
+    database.init_db()
 
+# ---------- ROUTES ----------
 @app.route('/')
 def index():
     events = database.get_events()
@@ -16,8 +19,9 @@ def add():
     name = request.form.get('name')
     date = request.form.get('date')
     location = request.form.get('location')
+    description = request.form.get('description')
     if name and date and location:
-        database.add_event(name, date, location)
+        database.add_event(name, date, location, description)
     return redirect(url_for('index'))
 
 @app.route('/delete/<int:event_id>')

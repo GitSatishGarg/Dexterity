@@ -3,7 +3,7 @@ services:
     name: event-portal
     env: python
     buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
+    startCommand: "gunicorn app:app --workers 1 --bind 0.0.0.0:10000"
     envVars:
       - key: DATABASE_URL
         sync: false
