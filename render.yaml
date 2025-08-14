@@ -1,11 +1,10 @@
 services:
   - type: web
-    name: event-portal-flask
+    name: event-portal
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn app:app"
     autoDeploy: true
     envVars:
-      - key: SECRET_KEY
-        generateValue: true
-      # Set DATABASE_URL in the dashboard if you add Postgres
+      - key: DATABASE_URL
+        value: sqlite:///db.sqlite3

@@ -1,25 +1,29 @@
-import os
 from flask import Flask, render_template, request, redirect
-from flask_sqlalchemy import SQLAlchemy
+import database
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
-# Use DATABASE_URL if present (Render Postgres), else SQLite
-db_url = os.getenv("DATABASE_URL", "sqlite:///db.sqlite3")
-app.config["SQLALCHEMY_DATABASE_URI"] = db_url
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db = SQLAlchemy(app)
 
-# Example model
-class Event(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
+# Initialize DB
+database.init_db()
 
 @app.route("/")
-def home():
-    return "Event Portal is running!"
+def index():
+    events = database.get_events()
+    return render_template("index.html", events=events)
+
+@app.route("/add", methods=["POST"])
+def add():
+    name = request.form.get("name")
+    date = request.form.get("date")
+    location = request.form.get("location")
+    database.add_event(name, date, location)
+    return redirect("/")
+
+
+@app.route("/delete/<int:event_id>")
+def delete(event_id):
+    database.delete_event(event_id)
+    return redirect("/")
 
 if __name__ == "__main__":
-    with app.app_context():
-        db.create_all()  # quick bootstrapping
     app.run(host="0.0.0.0", port=5000)
