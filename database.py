@@ -1,5 +1,5 @@
 import os
-import psycopg
+import psycopg2
 from psycopg.rows import dict_row
 
 DATABASE_URL = os.environ.get("DATABASE_URL")
