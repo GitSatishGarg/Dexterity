@@ -1,29 +1,29 @@
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, url_for
 import database
 
 app = Flask(__name__)
 
-# Initialize DB
+# Initialize PostgreSQL DB
 database.init_db()
 
-@app.route("/")
+@app.route('/')
 def index():
     events = database.get_events()
-    return render_template("index.html", events=events)
+    return render_template('index.html', events=events)
 
-@app.route("/add", methods=["POST"])
+@app.route('/add', methods=['POST'])
 def add():
-    name = request.form.get("name")
-    date = request.form.get("date")
-    location = request.form.get("location")
-    database.add_event(name, date, location)
-    return redirect("/")
+    name = request.form.get('name')
+    date = request.form.get('date')
+    location = request.form.get('location')
+    if name and date and location:
+        database.add_event(name, date, location)
+    return redirect(url_for('index'))
 
-
-@app.route("/delete/<int:event_id>")
+@app.route('/delete/<int:event_id>')
 def delete(event_id):
     database.delete_event(event_id)
-    return redirect("/")
+    return redirect(url_for('index'))
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    app.run(debug=True)
