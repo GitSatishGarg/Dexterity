@@ -40,18 +40,6 @@ def add_event(name, date, location, description=None):
     conn.commit()
     conn.close()
 
-def update_event(event_id, name, date, location, description=None):
-    conn = get_connection()
-    c = conn.cursor()
-    c.execute("""
-        UPDATE events
-        SET name = ?, date = ?, location = ?, description = ?
-        WHERE id = ?
-    """, (name, date, location, description, event_id))
-    conn.commit()
-    conn.close()
-
-
 def delete_event(event_id):
     conn = get_connection()
     c = conn.cursor()
