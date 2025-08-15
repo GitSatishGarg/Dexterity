@@ -83,7 +83,7 @@
     <div class="contact">
         <h2>Edit Event</h2>
         <form id="editForm" method="post" action="{{ url_for('add') }}">
-            <select id="editSelect">
+            <select id="editSelect" required>
                 <option value="">-- Select Event to Edit --</option>
                 {% for e in events %}
                     <option value="{{ e.id }}">{{ e.name }} ({{ e.date }})</option>
