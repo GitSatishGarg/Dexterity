@@ -61,11 +61,12 @@
                     <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;">{{ e.date }}</td>
                     <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;">{{ e.location }}</td>
                     <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;">{{ e.description or '-' }}</td>
-                    <td style="border-top: 1px solid lightgray; text-align: center; white-space: nowrap; width: 15%;">
-                    <form action="{{ url_for('delete', event_id=e.id) }}" method="post" style="display:inline-block; margin-left:5px;">
-                        <button type="submit" class="delete-btn">Delete</button>
-                    </form>
-                </td>
+                    <td style="border-top:1px solid lightgray; text-align:center; white-space:nowrap;">
+                        <form action="{{ url_for('delete', event_id=e.id or e['id']) }}" method="post" style="display:inline-block; margin-left:5px;">
+                            <button type="submit" class="delete-btn">Delete</button>
+                        </form>
+                    </td>
+
 
                 </tr>
                 {% endfor %}
@@ -100,19 +101,14 @@
 </section>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-    // Convert Flask events to JS objects
-
+document.addEventListener("DOMContentLoaded", () => {
     const jsEvents = {{ events | tojson | safe }};
-
-
     const editSelect = document.getElementById('editSelect');
     const editForm = document.getElementById('editForm');
     const oldIdInput = document.getElementById('old_id');
 
     editSelect.addEventListener('change', () => {
         const selectedId = parseInt(editSelect.value);
-
         if (!selectedId) {
             editForm.name.value = '';
             editForm.date.value = '';
@@ -122,14 +118,13 @@
             return;
         }
 
-        const event = jsEvents.find(ev => ev.id === selectedId);
+        const event = jsEvents.find(ev => ev.id === selectedId || ev['id'] === selectedId);
         if (!event) return;
 
-        editForm.name.value = event.name;
-        editForm.date.value = event.date;
-        editForm.location.value = event.location;
-        editForm.description.value = event.description || '';
-        // Set hidden old_id so /add route deletes old event
+        editForm.name.value = event.name || event['name'];
+        editForm.date.value = event.date || event['date'];
+        editForm.location.value = event.location || event['location'];
+        editForm.description.value = event.description || event['description'] || '';
         oldIdInput.value = selectedId;
     });
 });
