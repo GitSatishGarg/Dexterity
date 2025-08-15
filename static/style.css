@@ -1,0 +1,374 @@
+html, body {
+    font-family: 'Kanit', sans-serif;
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    transition: 1s;
+}
+
+body {
+    background: linear-gradient(rgba(0, 3, 17, 1), rgba(0, 3, 17, 1));
+}
+
+.header {
+    min-height: 100vh;
+    width: 100%;
+    background-image: linear-gradient(rgba(0, 3, 17, 0.3),rgba(0, 3, 17, 1)),url(images/home.jpg);
+    background-position: center;
+    background-size: cover;
+    position: relative;
+}
+
+nav {
+    display: flex;
+    padding: 2% 6%;
+    justify-content: space-between;
+    align-items: center;
+} 
+
+img{
+    object-fit: cover;
+    margin: 15px;
+}
+
+.logo {
+    width: 10vw;
+}
+
+h1 {
+    color: white;
+}
+
+.head-links {
+    flex: 1;
+    text-align: right;
+    transition: all 0.3s ease-in-out;
+}
+
+.head-links.fadeIn{
+    animation: fadeIn 500ms forwards;
+}
+
+.head-links.fadeOut{
+    animation: fadeOut 500ms forwards;
+}
+
+@keyframes fadeIn{
+    0%{
+        opacity: 0;
+    }
+    100%{
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut{
+    0%{
+        opacity: 1;
+    }
+    100%{
+        opacity: 0;
+    }
+}
+
+.head-links ul li {
+    list-style: none;
+    display: inline-block;
+    padding: 8px 15px;
+    position: relative;
+}
+
+.head-links ul li a {
+    color: white;
+    text-decoration: none;
+    font-size: 15px;
+    transition: all 0.2s ease-in-out;
+}
+
+.head-links ul li a:hover{
+    text-shadow: 0 0 5px lightgray;
+}
+
+.special{
+    font-size: 35px; 
+    color: white;
+    transition: all 0.2s ease-in-out;
+}
+
+.special:hover{
+    text-shadow: 0 0 5px lightgray;
+}
+
+.fa {
+    display: none;
+}
+
+@media screen and (max-width: 695px){
+    
+    .head-links ul li {
+        display: block;
+    }
+    
+    .fa {
+        display: block;
+        color: white;
+        font-size: 25px;
+        cursor: pointer;
+        margin: 15px;
+    }
+    
+    .head-links {
+        background: #000311;
+        position: absolute;
+        height: 100vh;
+        width: 200px;
+        text-align: left;
+        z-index: 5;
+        top: 0;
+        right: 0px;
+        display: none;
+    }
+    
+    .head-links ul {
+        padding: 25px;
+    }
+}
+
+#backToTop {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    background-color: #203175;
+    color: white;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    border-radius: 50%;
+    border: none;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+#backToTop:hover{
+    box-shadow: 0 0 15px #203175;
+}
+
+#backToTop:active {
+    background: #cc22;
+}
+
+.flyIn {
+    animation: flyIn;
+    animation-duration: 2s;
+}
+
+@keyframes flyIn{
+    0%{padding: 500px 0 0 0;}
+    100%{padding: 15px 0 0 0;}
+}
+
+h1 {
+    
+    font-size: 35px;
+    font-weight: 600;
+}
+
+p {
+    font-size: 15px;
+    font-weight: 300;
+    line-height: 20px;
+    padding: 10px;
+    color: lightgray;
+    text-align: center;
+}
+
+.stories-row {
+    margin: 3% 0 0 0;
+    justify-content: space-between;
+    display: flex;
+}
+
+h3 {
+    font-weight: 600;
+    margin: 10px 0;
+    text-align: center;
+    color: white;
+}
+
+h4 {
+    font-weight: 300;
+    margin: 10px 0;
+    text-align: center;
+    color: white;
+}
+
+.footer {
+    text-align: center;
+    width: 70%;
+    padding: 25px 0;
+    margin: auto;
+}
+
+.footer h3 {
+    margin: 2px0 0 25px 0;
+    font-weight: 600;
+}
+
+.footer a{
+    text-decoration: none;
+}
+
+.footer i {
+    color: lightgray;
+    margin: 0 5px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    margin: 15px;
+}
+
+.footer i:hover{
+    box-shadow: 0 0 15px #203175;
+}
+
+/* Contact Us */
+
+.subheader-contact {
+    height: 50vh;
+    width: 100%;
+    background-image: linear-gradient(rgba(0, 3, 17, 0.8),rgba(0, 3, 17, 0.8)),url(images/contact.jpg);
+    background-position: center;
+    background-size: cover;
+    text-align: center;
+    color: white;
+}
+
+@media screen and (min-width:695px){
+    .subheader-contact .fa {
+    display: none;
+    }
+}
+
+.contact-us {
+    width: 80%;
+    margin: auto;
+    color: lightgray;
+    margin-top: 5rem;
+}
+
+.table {
+    width: 80%;
+    margin: auto;
+    color: lightgray;
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+}
+
+.contact form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: stretch; /* ensures all children have same height */
+}
+
+.contact form input[type="text"],
+.contact form input[type="date"] {
+    flex: 1;
+    min-width: 150px;
+    height: 50px;
+}
+
+.contact form .submit-button {
+    flex: 0 0 auto; /* keeps button size fixed */
+    margin: 0;
+}
+
+
+.contact{
+    margin: 0 0 30px 0;
+    flex-basis: 50%;
+}
+
+.contact div{
+    margin: 0 0 40px 0;
+    align-items: center;
+    display: flex;
+}
+
+.contact .fa{
+    color: #203175;
+    margin-right: 5px;
+    font-size: 22px;
+    margin: 10px;
+}
+
+.contact h5{
+    font-weight: 400;
+    font-size: 17px;
+    margin: 0 0 5px 0;
+}
+
+.contact input, .contact textarea{
+    outline: none;
+    margin: 0 0 15px 0;
+    padding: 15px;
+    width: 100%;    
+    height: 50px;      /* same height for inputs and button */
+    box-sizing: border-box;
+    margin: 0;          /* remove any extra spacing */
+    vertical-align: middle;
+    border: 1px solid lightgray;
+    background: none;
+    color: white;
+    border-radius: 10px;
+}
+
+.submit-button {
+    outline: none;
+    box-sizing: border-box;
+    border-radius: 10px;
+    color: #263E9D;
+    border: 1px solid #263E9D;
+    background: none;
+    width: 200px;
+    height: 50px;
+    transition: all 0.2s ease-in-out;
+}
+
+.submit-button:hover{
+    box-shadow: 0 0 15px #263E9D;
+}
+
+.submit-button:active {
+    background: #263E9D;
+    color: white;
+}
+
+.delete-btn, .edit-btn {
+    padding: 10px 20px;      /* smaller padding */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;        /* optional, smaller font */
+    line-height: 1;         /* removes extra line spacing */
+    transition: all 0.4s ease-in-out;
+}
+
+.delete-btn {
+    background-color: #ae2012;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #780000;
+}
+
+.edit-btn {
+    background-color: #bb3e03;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #c1121f;
+}
+

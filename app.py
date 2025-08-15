@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-import database
+import database as database
 
 app = Flask(__name__)
 
@@ -18,7 +18,7 @@ def add():
         database.add_event(name, date, location, description)
     return redirect(url_for('index'))
 
-@app.route('/delete/<int:event_id>')
+@app.route('/delete/<int:event_id>', methods=['POST'])
 def delete(event_id):
     database.delete_event(event_id)
     return redirect(url_for('index'))
