@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
-import database as database
+import localdb as database
 
 app = Flask(__name__)
 
@@ -10,7 +10,23 @@ def index():
     events_data = [dict(e) for e in events]
     return render_template('index.html', events=events_data)
 
-
+'''
+@app.route('/')
+def index():
+    events = database.get_events()  # returns namedtuples
+    # convert namedtuples to dicts
+    events_data = [
+        {
+            "id": e.id,
+            "name": e.name,
+            "date": e.date,
+            "location": e.location,
+            "description": e.description
+        }
+        for e in events
+    ]
+    return render_template('index.html', events=events_data)
+'''
 
 
 @app.route('/add', methods=['POST'])
