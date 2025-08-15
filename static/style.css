@@ -322,6 +322,20 @@ h4 {
     border-radius: 10px;
 }
 
+.contact select{
+    outline: none;
+    margin: 0 0 15px 0;
+    padding: 15px;   
+    height: 50px;      /* same height for inputs and button */
+    box-sizing: border-box;
+    margin: 0;          /* remove any extra spacing */
+    vertical-align: middle;
+    border: 1px solid lightgray;
+    background: #263E9D;
+    color: white;
+    border-radius: 10px;
+}
+
 .submit-button {
     outline: none;
     box-sizing: border-box;
@@ -343,6 +357,28 @@ h4 {
     color: white;
 }
 
+
+.edit-button {
+    outline: none;
+    box-sizing: border-box;
+    border-radius: 10px;
+    color: #c1121f;
+    border: 1px solid #c1121f;
+    background: none;
+    width: 200px;
+    height: 50px;
+    transition: all 0.2s ease-in-out;
+}
+
+.edit-button:hover{
+    box-shadow: 0 0 15px #c1121f;
+}
+
+.edit-button:active {
+    background: #c1121f;
+    color: white;
+}
+
 .delete-btn, .edit-btn {
     padding: 10px 20px;      /* smaller padding */
     border: none;
@@ -352,6 +388,7 @@ h4 {
     font-size: 14px;        /* optional, smaller font */
     line-height: 1;         /* removes extra line spacing */
     transition: all 0.4s ease-in-out;
+    margin: auto;
 }
 
 .delete-btn {

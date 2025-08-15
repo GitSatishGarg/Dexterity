@@ -1,143 +1,143 @@
-<html> 
-   
-    <head>
-      
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CSN Computer Club - Events</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;600;700&display=swap" rel="stylesheet">
-        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-        
-    </head>
-    
-    <body>
-        <section class="subheader-contact">
-           
-            <nav>
-                <a href="home.html"><img src="" class=""></a>
-                <div class="head-links" id="headLinks">
-                   <i class="fa fa-times" onclick="hideMenu()" ></i>
-                    <ul>
-                        <li><a href="">These</a></li>
-                        <li><a href="">Do</a></li>
-                        <li><a href="">Not</a></li>
-                        <li><a href="">Work</a></li>
-                    </ul>
-                </div>
-                <i class="fa fa-bars" style="float: right;" onclick="showMenu()"></i>
-            </nav>
-            <h1>Events</h1>
-        </section>
-        
-        <!-- Add Event Form -->
-        <section class="contact-us fly">
-            <div class="contact">
-                <form action="{{ url_for('add') }}" method="post" name="eventForm">
-                    <input type="text" name="name" placeholder="Event name" required>
-                    <input type="date" name="date" required>
-                    <input type="text" name="location" placeholder="Location" required>
-                    <input type="text" name="description" placeholder="Description">
-                    <button type="submit" class="submit-button">Add Event</button>
-                </form>
-            </div>
-        </section>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSN Computer Club - Events</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+<body>
 
-        <!-- Events Table -->
-        <section class="table">
-            <div style="border: 1px solid lightgray; border-radius: 10px; overflow: hidden; width: 100%;">
-                <table width="100%" cellpadding="25" cellspacing="0" align="center">
-                    <tr>
-                        <td style="border-right: 1px solid lightgray;"><h3>ID</h3></td>
-                        <td style="border-right: 1px solid lightgray;"><h3>Name</h3></td>
-                        <td style="border-right: 1px solid lightgray;"><h3>Date</h3></td>
-                        <td style="border-right: 1px solid lightgray;"><h3>Location</h3></td>
-                        <td style="border-right: 1px solid lightgray;"><h3>Description</h3></td>
-                        <td><h3>Action</h3></td>
-                    </tr>
-                    {% if events %}
-                        {% for e in events %}
-                        <tr>
-                            <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;"><h4>{{ e.id }}</h4></td>
-                            <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;"><h4>{{ e.name }}</h4></td>
-                            <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;"><h4>{{ e.date }}</h4></td>
-                            <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;"><h4>{{ e.location }}</h4></td>
-                            <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray; white-space: normal; word-wrap: break-word; line-height: 1.4em;"><p>{{ e.description or '-' }}</p></td>
-                            <td style="border-top: 1px solid lightgray; text-align: center; vertical-align: middle; width: 20%;">
-                            <form action="{{ url_for('delete', event_id=e.id) }}" method="get" style="display:inline-block; margin:0; padding:0;">
-                                <button type="submit" class="edit-btn">Delete</button>
-                            </form>
-                            <form action="{{ url_for('delete', event_id=e.id) }}" method="post" style="display:inline-block; margin:0; padding:0 0 0 5px;">
-                                <button type="submit" class="delete-btn">Delete</button>
-                            </form>
-                        </td>
+<section class="subheader-contact">
+    <nav>
+        <a href="home.html"><img src="" class=""></a>
+        <div class="head-links" id="headLinks">
+           <i class="fa fa-times" onclick="hideMenu()"></i>
+            <ul>
+                <li><a href="">These</a></li>
+                <li><a href="">Do</a></li>
+                <li><a href="">Not</a></li>
+                <li><a href="">Work</a></li>
+            </ul>
+        </div>
+        <i class="fa fa-bars" style="float: right;" onclick="showMenu()"></i>
+    </nav>
+    <h1>Events</h1>
+</section>
+
+<!-- Add Event Form -->
+<section class="contact-us fly">
+    <div class="contact">
+        <h2>Add Event</h2>
+        <form action="{{ url_for('add') }}" method="post" name="eventForm">
+            <input type="text" name="name" placeholder="Event name" required>
+            <input type="date" name="date" required>
+            <input type="text" name="location" placeholder="Location" required>
+            <input type="text" name="description" placeholder="Description">
+            <button type="submit" class="submit-button">Add Event</button>
+        </form>
+    </div>
+</section>
+
+<!-- Events Table -->
+<section class="table">
+    <div style="border: 1px solid lightgray; border-radius: 10px; overflow: hidden; width: 100%;">
+        <table width="100%" cellpadding="25" cellspacing="0" align="center">
+            <tr>
+                <td style="border-right: 1px solid lightgray;"><h3>ID</h3></td>
+                <td style="border-right: 1px solid lightgray;"><h3>Name</h3></td>
+                <td style="border-right: 1px solid lightgray;"><h3>Date</h3></td>
+                <td style="border-right: 1px solid lightgray;"><h3>Location</h3></td>
+                <td style="border-right: 1px solid lightgray;"><h3>Description</h3></td>
+                <td><h3>Action</h3></td>
+            </tr>
+            {% if events %}
+                {% for e in events %}
+                <tr>
+                    <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;">{{ e.id }}</td>
+                    <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;">{{ e.name }}</td>
+                    <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;">{{ e.date }}</td>
+                    <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;">{{ e.location }}</td>
+                    <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;">{{ e.description or '-' }}</td>
+                    <td style="border-top: 1px solid lightgray; text-align: center; white-space: nowrap; width: 15%;">
+                    <form action="{{ url_for('edit', event_id=e.id) }}" method="post" style="display:inline-block; margin-right:5px;">
+                        <button type="submit" class="edit-btn">Edit</button>
+                    </form>
+                    <form action="{{ url_for('delete', event_id=e.id) }}" method="post" style="display:inline-block; margin-left:5px;">
+                        <button type="submit" class="delete-btn">Delete</button>
+                    </form>
+                </td>
+
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="6" style="border-top:1px solid lightgray; text-align:center;">No events found</td>
+                </tr>
+            {% endif %}
+        </table>
+    </div>
+</section>
+<!-- Edit Event Form -->
+<section class="contact-us fly">
+    <div class="contact">
+        <h2>Edit Event</h2>
+        <form id="editForm" method="post" action="{{ url_for('add') }}">
+            <select id="editSelect">
+                <option value="">-- Select Event to Edit --</option>
+                {% for e in events %}
+                    <option value="{{ e.id }}">{{ e.name }} ({{ e.date }})</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="name" placeholder="Event name" required>
+            <input type="date" name="date" required>
+            <input type="text" name="location" placeholder="Location" required>
+            <input type="text" name="description" placeholder="Description">
+            <!-- Hidden input to store the old event ID -->
+            <input type="hidden" name="old_id" id="old_id" value="">
+            <button type="submit" class="edit-button">Edit Event</button>
+        </form>
+    </div>
+</section>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+    // Convert Flask events to JS objects
+
+    const jsEvents = {{ events | tojson | safe }};
 
 
-                        </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;"><h4>&nbsp;</h4></td>
-                            <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;"><h4>&nbsp;</h4></td>
-                            <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;"><h4>&nbsp;</h4></td>
-                            <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;"><h4>&nbsp;</h4></td>
-                            <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;"><h4>&nbsp;</h4></td>
-                            <td style="border-top: 1px solid lightgray;"><h4>&nbsp;</h4></td>
-                        </tr>
-                    {% endif %}
-                </table>
-            </div>
-        </section>
+    const editSelect = document.getElementById('editSelect');
+    const editForm = document.getElementById('editForm');
+    const oldIdInput = document.getElementById('old_id');
 
-        <section class="footer">
-            <h3>Event Manager</h3>
-            <p>Temporary paragraph. (I swear I will actually find a good name this time lol)</p>
-            <div class="social-icons">
-                <a href="https://www.instagram.com/cambridgeschoolnoida/"><i class="fa fa-instagram"></i></a>
-                <a href="https://www.facebook.com/Imagine.Explore.Discover.Grow.Soar"><i class="fa fa-facebook"></i></a>
-                <a href="https://twitter.com/cambridgenoida1"><i class="fa fa-twitter"></i></a>
-                <a href="https://www.youtube.com/channel/UCbROQzfuef8r_QYEUQkQpJA"><i class="fa fa-youtube"></i></a>
-            </div>
-        </section>
-            
-        <button id="backToTop">
-            <i class="fa fa-arrow-up"></i>
-        </button>
-        
-        <script>
-            var headLinks = document.getElementById("headLinks");
-            function showMenu(){
-                headLinks.classList.remove("fadeOut");
-                headLinks.style.display = "block";
-                headLinks.classList.toggle('fadeIn');
-            }
-            function hideMenu(){
-                headLinks.classList.remove("fadeIn");
-                headLinks.classList.toggle('fadeOut');
-                headLinks.addEventListener('animationend', () => {
-                    headLinks.style.display = "none";
-                }, {once: true})
-            }
-            
-            const backToTop = document.querySelector("#backToTop");
-            backToTop.addEventListener("click", function (){
-                window.scrollTo({
-                    top: 0,
-                    left: 0,
-                    behavior: "smooth"
-                });   
-            });
-            
-            const observer = new IntersectionObserver(entries => {
-                  entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                      entry.target.classList.add('flyIn');
-                    }
-                  });
-                });
+    editSelect.addEventListener('change', () => {
+        const selectedId = parseInt(editSelect.value);
 
-                observer.observe(document.querySelector('.fly'));
-        </script>
-        
-    </body>
+        if (!selectedId) {
+            editForm.name.value = '';
+            editForm.date.value = '';
+            editForm.location.value = '';
+            editForm.description.value = '';
+            oldIdInput.value = '';
+            return;
+        }
+
+        const event = jsEvents.find(ev => ev.id === selectedId);
+        if (!event) return;
+
+        editForm.name.value = event.name;
+        editForm.date.value = event.date;
+        editForm.location.value = event.location;
+        editForm.description.value = event.description || '';
+        // Set hidden old_id so /add route deletes old event
+        oldIdInput.value = selectedId;
+    });
+});
+</script>
+
+
+</body>
 </html>

@@ -2,7 +2,6 @@ import sqlite3
 from collections import namedtuple
 
 DB_NAME = "events.db"
-
 Event = namedtuple("Event", ["id", "name", "date", "location", "description"])
 
 def get_connection():
@@ -29,7 +28,6 @@ def get_events():
     c.execute("SELECT id, name, date, location, description FROM events ORDER BY id ASC")
     rows = c.fetchall()
     conn.close()
-    # Convert each row tuple into an Event object
     return [Event(*row) for row in rows]
 
 def add_event(name, date, location, description=None):
@@ -42,6 +40,18 @@ def add_event(name, date, location, description=None):
     conn.commit()
     conn.close()
 
+def update_event(event_id, name, date, location, description=None):
+    conn = get_connection()
+    c = conn.cursor()
+    c.execute("""
+        UPDATE events
+        SET name = ?, date = ?, location = ?, description = ?
+        WHERE id = ?
+    """, (name, date, location, description, event_id))
+    conn.commit()
+    conn.close()
+
+
 def delete_event(event_id):
     conn = get_connection()
     c = conn.cursor()
@@ -49,5 +59,4 @@ def delete_event(event_id):
     conn.commit()
     conn.close()
 
-# initialize database
 init_db()
