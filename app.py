@@ -48,17 +48,24 @@ def add():
     user_id = session.get("user_id")
     if not user_id:
         return "Not logged in", 401
-    name = request.form["name"]
-    date = request.form["date"]
-    location = request.form["location"]
-    description = request.form.get("description", "")
-    old_id = request.form.get("old_id")
 
-    if old_id:  # Edit
-        database.edit_event(int(old_id), name, date, location, description)
-    else:       # Add
+    name = request.form.get("name")
+    date = request.form.get("date")
+    location = request.form.get("location")
+    description = request.form.get("description") or ""
+    old_id = request.form.get("old_id")  # this must be sent from the edit form
+
+    if old_id:  # Edit existing event
+        try:
+            old_id = int(old_id)
+            database.edit_event(old_id, name, date, location, description)
+        except ValueError:
+            return "Invalid event ID", 400
+    else:  # Add new event
         database.add_event(user_id, name, date, location, description)
+
     return redirect("/")
+
 
 @app.route("/delete/<int:event_id>", methods=["POST"])
 def delete(event_id):
@@ -70,6 +77,7 @@ def delete(event_id):
 def get_sub_events(event_id):
     subs = database.get_sub_events(event_id)
     return jsonify([dict(s) for s in subs])
+
 @app.route("/add_sub", methods=["POST"])
 def add_sub():
     event_id = request.form.get("event_id")
