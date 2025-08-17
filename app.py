@@ -77,7 +77,6 @@ def add_sub():
     participants = request.form.get("participants", "")
     teacher = request.form.get("teacher", "")
 
-    # Convert num_participants to int if provided
     if num_participants:
         try:
             num_participants = int(num_participants)

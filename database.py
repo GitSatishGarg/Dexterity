@@ -141,6 +141,7 @@ def create_tables():
     conn = get_connection()
     cur = conn.cursor()
 
+    # Users table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
@@ -149,6 +150,7 @@ def create_tables():
         )
     """)
 
+    # Events table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS events (
             id SERIAL PRIMARY KEY,
@@ -159,6 +161,7 @@ def create_tables():
         )
     """)
 
+    # Ensure user_id exists
     cur.execute("""
     DO $$
     BEGIN
@@ -172,7 +175,7 @@ def create_tables():
     $$;
     """)
 
-
+    # Sub-events table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS sub_events (
             id SERIAL PRIMARY KEY,
