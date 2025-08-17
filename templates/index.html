@@ -83,8 +83,7 @@
 <section class="contact-us fly">
     <div class="contact">
         <h2>Edit Event</h2>
-        <form id="editForm" method="post" action="{{ url_for('edit') }}">
-
+        <form id="editForm" method="post" action="{{ url_for('add') }}">
             <select id="editSelect" required>
                 <option value="">-- Select Event to Edit --</option>
                 {% for e in events %}
@@ -210,7 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
             oldIdInput.value = '';
             return;
         }
-        const event = jsEvents.find(ev => ev.id === selectedId);
+        const event = jsEvents.find(ev => parseInt(ev.id) === selectedId);
         if (!event) return;
         editForm.name.value = event.name || '';
         editForm.date.value = event.date || '';
