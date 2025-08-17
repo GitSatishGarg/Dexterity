@@ -63,7 +63,7 @@
                     <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;">{{ e.location }}</td>
                     <td style="border-right: 1px solid lightgray; border-top: 1px solid lightgray;">{{ e.description or '-' }}</td>
                     <td style="border-top:1px solid lightgray; text-align:center; white-space:nowrap;">
-                        <form action="{{ url_for('delete', event_id=e.id or e['id']) }}" method="post" style="display:inline-block; margin-left:5px;">
+                        <form action="{{ url_for('delete', event_id=e.id) }}" method="post" style="display:inline-block; margin-left:5px;">
                             <button type="submit" class="delete-btn">Delete</button>
                         </form>
                     </td>
@@ -99,7 +99,7 @@
     </div>
 </section>
 
-<!-- Show Sub-Events based on Main Event -->
+<!-- Sub-Events Display & Add/Edit Forms (unchanged except dynamic ids) -->
 <section class="table">
     <h2>View Sub-Events</h2>
     <select id="main_event">
@@ -114,8 +114,6 @@
     </div>
 </section>
 
-
-<!-- Sub-Events Form -->
 <section class="contact-us fly">
     <div class="contact">
         <h2>Add Sub-Events</h2>
@@ -136,7 +134,6 @@
     </div>
 </section>
 
-<!-- Edit Sub-Event Form -->
 <section class="contact-us fly">
     <div class="contact">
         <h2>Edit Sub-Event</h2>
@@ -166,6 +163,7 @@
     </div>
 </section>
 
+<!-- Login/Register Overlay -->
 <div id="authOverlay" style="display: {% if not username %}flex{% else %}none{% endif %};
     position: fixed; top:0; left:0; width:100%; height:100%;z-index:1000; align-items:center; justify-content:center;">
   
@@ -194,9 +192,8 @@ function openAuthModal() {
 }
 </script>
 
-
-
 <script>
+// Populate edit event form without losing sub-events
 document.addEventListener("DOMContentLoaded", () => {
     const jsEvents = {{ events | tojson | safe }};
     const editSelect = document.getElementById('editSelect');
@@ -205,16 +202,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     editSelect.addEventListener('change', () => {
         const selectedId = parseInt(editSelect.value);
-        if (!selectedId) {
-            editForm.name.value = '';
-            editForm.date.value = '';
-            editForm.location.value = '';
-            editForm.description.value = '';
-            oldIdInput.value = '';
-            return;
-        }
         const event = jsEvents.find(ev => ev.id === selectedId || ev['id'] === selectedId);
         if (!event) return;
+
         editForm.name.value = event.name || '';
         editForm.date.value = event.date || '';
         editForm.location.value = event.location || '';
@@ -225,90 +215,73 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <script>
+// Load sub-events dynamically
 document.getElementById("main_event").addEventListener("change", function() {
-    let eventId = this.value;
-    let subDiv = document.getElementById("sub_event_list");
+    const eventId = this.value;
+    const subDiv = document.getElementById("sub_event_list");
 
-    if (!eventId) {
-        subDiv.innerHTML = "<p>No event selected</p>";
-        return;
-    }
+    if (!eventId) return subDiv.innerHTML = "<p>No event selected</p>";
 
     fetch(`/get_sub_events/${eventId}`)
-      .then(res => res.json())
-      .then(data => {
-          if (data.length === 0) {
-              subDiv.innerHTML = "<p>No sub-events found</p>";
-              return;
-          }
-
-          let html = `<table width="100%" cellpadding="10" cellspacing="0" border="1">
-              <tr>
-                <th>ID</th><th>Name</th><th>Contact</th><th>No. Participants</th>
-                <th>Participants</th><th>Teacher</th><th>Action</th>
-              </tr>`;
-          data.forEach(sub => {
-              html += `<tr>
-                <td>${sub.id}</td>
-                <td>${sub.name}</td>
-                <td>${sub.contact || '-'}</td>
-                <td>${sub.num_participants || '-'}</td>
-                <td>${sub.participants || '-'}</td>
-                <td>${sub.teacher || '-'}</td>
-                <td style="text-align:center;">
-                    <form action="/delete_sub/${sub.id}" method="post" style="display:inline;">
-                        <button type="submit" class="delete-btn">Delete</button>
-                    </form>
-                </td>
-              </tr>`;
-          });
-          html += "</table>";
-          subDiv.innerHTML = html;
-      })
-      .catch(err => {
-          console.error(err);
-          subDiv.innerHTML = "<p>Error loading sub-events</p>";
-      });
+        .then(res => res.json())
+        .then(data => {
+            if (!data.length) return subDiv.innerHTML = "<p>No sub-events found</p>";
+            let html = `<table width="100%" cellpadding="10" cellspacing="0" border="1">
+                        <tr>
+                        <th>ID</th><th>Name</th><th>Contact</th><th>No. Participants</th>
+                        <th>Participants</th><th>Teacher</th><th>Action</th></tr>`;
+            data.forEach(sub => {
+                html += `<tr>
+                    <td>${sub.id}</td>
+                    <td>${sub.name}</td>
+                    <td>${sub.contact || '-'}</td>
+                    <td>${sub.num_participants || '-'}</td>
+                    <td>${sub.participants || '-'}</td>
+                    <td>${sub.teacher || '-'}</td>
+                    <td style="text-align:center;">
+                        <form action="/delete_sub/${sub.id}" method="post" style="display:inline;">
+                            <button type="submit" class="delete-btn">Delete</button>
+                        </form>
+                    </td>
+                </tr>`;
+            });
+            html += "</table>";
+            subDiv.innerHTML = html;
+        }).catch(err => subDiv.innerHTML = "<p>Error loading sub-events</p>");
 });
 </script>
 
 <script>
+// Edit sub-event form dynamically
 document.addEventListener("DOMContentLoaded", () => {
     const editSubEventSelect = document.getElementById("editSubEventSelect");
     const editSubSelect = document.getElementById("editSubSelect");
     const editSubForm = document.getElementById("editSubForm");
 
-    // When a main event is chosen in the edit form → load its sub-events
     editSubEventSelect.addEventListener("change", () => {
-        let eventId = editSubEventSelect.value;
+        const eventId = editSubEventSelect.value;
         editSubSelect.innerHTML = '<option value="">-- Select Sub-Event --</option>';
-
         if (!eventId) return;
 
         fetch(`/get_sub_events/${eventId}`)
-          .then(res => res.json())
-          .then(data => {
-              if (data.length === 0) {
-                  editSubSelect.innerHTML = '<option value="">No sub-events found</option>';
-                  return;
-              }
-              data.forEach(sub => {
-                  let opt = document.createElement("option");
-                  opt.value = sub.id;
-                  opt.textContent = sub.name;
-                  opt.dataset.contact = sub.contact || "";
-                  opt.dataset.num_participants = sub.num_participants || "";
-                  opt.dataset.participants = sub.participants || "";
-                  opt.dataset.teacher = sub.teacher || "";
-                  editSubSelect.appendChild(opt);
-              });
-          })
-          .catch(err => console.error(err));
+            .then(res => res.json())
+            .then(data => {
+                if (!data.length) return editSubSelect.innerHTML = '<option value="">No sub-events found</option>';
+                data.forEach(sub => {
+                    const opt = document.createElement("option");
+                    opt.value = sub.id;
+                    opt.textContent = sub.name;
+                    opt.dataset.contact = sub.contact || "";
+                    opt.dataset.num_participants = sub.num_participants || "";
+                    opt.dataset.participants = sub.participants || "";
+                    opt.dataset.teacher = sub.teacher || "";
+                    editSubSelect.appendChild(opt);
+                });
+            });
     });
 
-    // When a sub-event is chosen → populate form fields
     editSubSelect.addEventListener("change", () => {
-        let selected = editSubSelect.options[editSubSelect.selectedIndex];
+        const selected = editSubSelect.options[editSubSelect.selectedIndex];
         if (!selected.value) {
             editSubForm.sub_id.value = "";
             editSubForm.event_id.value = "";
@@ -329,7 +302,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
-
 
 </body>
 </html>
