@@ -192,5 +192,26 @@ def create_tables():
     cur.close()
     conn.close()
 
+def ensure_user_id_column():
+    conn = get_connection()
+    cur = conn.cursor()
+
+    # Check if user_id column exists
+    cur.execute("""
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name='events' AND column_name='user_id'
+    """)
+    if not cur.fetchone():
+        # Column doesn't exist — create it
+        cur.execute("ALTER TABLE events ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE CASCADE")
+        conn.commit()
+
+    cur.close()
+    conn.close()
+
+
 if __name__ == "__main__":
-    create_tables()
+    create_tables()          # create tables if missing
+    ensure_user_id_column()  # make sure user_id exists
+
