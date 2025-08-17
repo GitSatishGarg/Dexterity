@@ -96,12 +96,17 @@ def add_sub():
     participants = request.form.get('participants')
     teacher = request.form.get('teacher')
 
-    if sub_id:
-        database.update_sub_event(username, int(sub_id), name, contact, num_participants, participants, teacher)
-    elif event_id and name:
-        database.add_sub_event(username, int(event_id), name, contact, num_participants, participants, teacher)
+    # Convert empty strings to None
+    event_id_int = int(event_id) if event_id and event_id.strip() else None
+    sub_id_int = int(sub_id) if sub_id and sub_id.strip() else None
+
+    if sub_id_int:
+        database.update_sub_event(username, sub_id_int, name, contact, num_participants, participants, teacher)
+    elif event_id_int and name:
+        database.add_sub_event(username, event_id_int, name, contact, num_participants, participants, teacher)
 
     return redirect(url_for('index'))
+
 
 
 @app.route('/delete_sub/<int:sub_id>', methods=['POST'])

@@ -11,7 +11,7 @@ def get_db_connection():
     return psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
 
 
-# ---------------- USERS ----------------
+# ---------------- USERS TABLE ----------------
 def init_users_table():
     with get_db_connection() as conn:
         with conn.cursor() as cur:
@@ -24,34 +24,12 @@ def init_users_table():
             """)
 
 
-def add_user(username, password):
-    init_users_table()
-    with get_db_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                "INSERT INTO users (username, password) VALUES (%s, %s)",
-                (username, password)
-            )
-    # Automatically create per-user tables
-    create_user_tables(username)
-
-
-def get_user(username):
-    init_users_table()
-    with get_db_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute("SELECT id, username, password FROM users WHERE username=%s", (username,))
-            return cur.fetchone()
-
-
-# ---------------- PER-USER TABLES ----------------
-def create_user_tables(username):
+# ---------------- CREATE USER TABLES ----------------
+def create_user_events_table(username):
     events_table = f"events_{username}"
     sub_events_table = f"sub_events_{username}"
-
     with get_db_connection() as conn:
         with conn.cursor() as cur:
-            # Events table
             cur.execute(f"""
                 CREATE TABLE IF NOT EXISTS {events_table} (
                     id SERIAL PRIMARY KEY,
@@ -61,7 +39,6 @@ def create_user_tables(username):
                     description TEXT
                 )
             """)
-            # Sub-events table
             cur.execute(f"""
                 CREATE TABLE IF NOT EXISTS {sub_events_table} (
                     id SERIAL PRIMARY KEY,
@@ -75,9 +52,26 @@ def create_user_tables(username):
             """)
 
 
+# ---------------- USERS ----------------
+def add_user(username, password):
+    init_users_table()
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("INSERT INTO users (username, password) VALUES (%s, %s)", (username, password))
+    create_user_events_table(username)
+
+
+def get_user(username):
+    init_users_table()
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT id, username, password FROM users WHERE username=%s", (username,))
+            return cur.fetchone()
+
+
 # ---------------- EVENTS ----------------
 def add_event(username, name, date, location, description):
-    create_user_tables(username)
+    create_user_events_table(username)
     table = f"events_{username}"
     with get_db_connection() as conn:
         with conn.cursor() as cur:
@@ -88,41 +82,51 @@ def add_event(username, name, date, location, description):
 
 
 def get_all_events(username):
-    create_user_tables(username)
+    create_user_events_table(username)
     table = f"events_{username}"
     with get_db_connection() as conn:
         with conn.cursor() as cur:
-            cur.execute(f"SELECT id, name, date, location, description FROM {table} ORDER BY date")
+            cur.execute(f"SELECT id, name, date, location, description FROM {table}")
             return cur.fetchall()
 
 
-def update_event(username, event_id, name, date, location, description):
-    create_user_tables(username)
-    table = f"events_{username}"
-    with get_db_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(
-                f"UPDATE {table} SET name=%s, date=%s, location=%s, description=%s WHERE id=%s",
-                (name, date, location, description, event_id)
-            )
-
-
 def delete_event(username, event_id):
-    create_user_tables(username)
+    create_user_events_table(username)
     table = f"events_{username}"
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(f"DELETE FROM {table} WHERE id=%s", (event_id,))
 
 
-# ---------------- SUB-EVENTS ----------------
-def add_sub_event(username, event_id, name, contact, num_participants, participants, teacher_in_charge):
-    create_user_tables(username)
-    table = f"sub_events_{username}"
+def update_event(username, event_id, name, date, location, description):
+    create_user_events_table(username)
+    table = f"events_{username}"
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
-                f"""INSERT INTO {table} 
+                f"""UPDATE {table} SET name=%s, date=%s, location=%s, description=%s WHERE id=%s""",
+                (name, date, location, description, event_id)
+            )
+
+
+# ---------------- SUB-EVENTS ----------------
+def add_sub_event(username, event_id, name, contact, num_participants, participants, teacher_in_charge):
+    create_user_events_table(username)
+    table = f"sub_events_{username}"
+
+    # Convert empty strings to None for PostgreSQL
+    contact = contact or None
+    participants = participants or None
+    teacher_in_charge = teacher_in_charge or None
+    if num_participants in (None, '', '0'):
+        num_participants = None
+    else:
+        num_participants = int(num_participants)
+
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(
+                f"""INSERT INTO {table}
                     (event_id, name, contact, num_participants, participants, teacher_in_charge)
                     VALUES (%s, %s, %s, %s, %s, %s)""",
                 (event_id, name, contact, num_participants, participants, teacher_in_charge)
@@ -130,7 +134,7 @@ def add_sub_event(username, event_id, name, contact, num_participants, participa
 
 
 def get_sub_events(username, event_id):
-    create_user_tables(username)
+    create_user_events_table(username)
     table = f"sub_events_{username}"
     with get_db_connection() as conn:
         with conn.cursor() as cur:
@@ -142,9 +146,26 @@ def get_sub_events(username, event_id):
             return cur.fetchall()
 
 
-def update_sub_event(username, sub_event_id, name, contact, num_participants, participants, teacher_in_charge):
-    create_user_tables(username)
+def delete_sub_event(username, sub_event_id):
+    create_user_events_table(username)
     table = f"sub_events_{username}"
+    with get_db_connection() as conn:
+        with conn.cursor() as cur:
+            cur.execute(f"DELETE FROM {table} WHERE id=%s", (sub_event_id,))
+
+
+def update_sub_event(username, sub_event_id, name, contact, num_participants, participants, teacher_in_charge):
+    create_user_events_table(username)
+    table = f"sub_events_{username}"
+
+    contact = contact or None
+    participants = participants or None
+    teacher_in_charge = teacher_in_charge or None
+    if num_participants in (None, '', '0'):
+        num_participants = None
+    else:
+        num_participants = int(num_participants)
+
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute(
@@ -153,11 +174,3 @@ def update_sub_event(username, sub_event_id, name, contact, num_participants, pa
                     WHERE id=%s""",
                 (name, contact, num_participants, participants, teacher_in_charge, sub_event_id)
             )
-
-
-def delete_sub_event(username, sub_event_id):
-    create_user_tables(username)
-    table = f"sub_events_{username}"
-    with get_db_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute(f"DELETE FROM {table} WHERE id=%s", (sub_event_id,))
