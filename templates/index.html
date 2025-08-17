@@ -192,6 +192,7 @@ function openAuthModal() {
 </script>
 
 <!-- Event Edit Script -->
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const jsEvents = {{ events | tojson | safe }} || [];
@@ -223,7 +224,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 </script>
-
 <!-- Sub-Event View Script -->
 <script>
 document.getElementById("main_event").addEventListener("change", function() {

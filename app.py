@@ -38,17 +38,12 @@ def logout():
 # ---------------- EVENTS ----------------
 @app.route("/", methods=["GET"])
 def index():
-    user_id = session.get("user_id")
     username = session.get("username")
-    events = database.get_all_events(user_id) if user_id else database.get_all_events()
+    events = database.get_all_events()
     return render_template("index.html", username=username, events=events)
 
 @app.route("/add", methods=["POST"])
 def add():
-    user_id = session.get("user_id")
-    if not user_id:
-        return "Not logged in", 401
-
     name = request.form.get("name")
     date = request.form.get("date")
     location = request.form.get("location")
@@ -56,13 +51,9 @@ def add():
     old_id = request.form.get("old_id")
 
     if old_id:  # Edit existing event
-        try:
-            old_id = int(old_id)
-            database.edit_event(old_id, name, date, location, description)
-        except ValueError:
-            return "Invalid event ID", 400
+        database.edit_event(old_id, name, date, location, description)
     else:  # Add new event
-        database.add_event(user_id, name, date, location, description)
+        database.add_event(name, date, location, description)
 
     return redirect("/")
 
