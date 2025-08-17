@@ -84,21 +84,19 @@
     <div class="contact">
         <h2>Edit Event</h2>
         <form id="editForm" method="post" action="{{ url_for('add') }}">
-    <select id="editSelect" required>
-        <option value="">-- Select Event to Edit --</option>
-        {% for e in events %}
-            <option value="{{ e.id }}">{{ e.name }} ({{ e.date }})</option>
-        {% endfor %}
-    </select>
-    <input type="text" id="editName" name="name" placeholder="Event name" required>
-    <input type="date" id="editDate" name="date" required>
-    <input type="text" id="editLocation" name="location" placeholder="Location" required>
-    <input type="text" id="editDescription" name="description" placeholder="Description">
-    <input type="hidden" name="old_id" id="old_id" value="">
-    <button type="submit" class="edit-button">Edit Event</button>
-</form>
-
-
+            <select id="editSelect" required>
+                <option value="">-- Select Event to Edit --</option>
+                {% for e in events %}
+                    <option value="{{ e.id }}">{{ e.name }} ({{ e.date }})</option>
+                {% endfor %}
+            </select>
+            <input type="text" id="editName" name="name" placeholder="Event name" required>
+            <input type="date" id="editDate" name="date" required>
+            <input type="text" id="editLocation" name="location" placeholder="Location" required>
+            <input type="text" id="editDescription" name="description" placeholder="Description">
+            <input type="hidden" name="old_id" id="old_id" value="">
+            <button type="submit" class="edit-button">Edit Event</button>
+        </form>
     </div>
 </section>
 

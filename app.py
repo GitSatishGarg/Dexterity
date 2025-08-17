@@ -56,12 +56,15 @@ def add():
     old_id = request.form.get("old_id")
 
     if old_id:  # Edit existing event
-        database.edit_event(int(old_id), name, date, location, description)
-    else:       # Add new event
+        try:
+            old_id = int(old_id)
+            database.edit_event(old_id, name, date, location, description)
+        except ValueError:
+            return "Invalid event ID", 400
+    else:  # Add new event
         database.add_event(user_id, name, date, location, description)
 
     return redirect("/")
-
 
 @app.route("/delete/<int:event_id>", methods=["POST"])
 def delete(event_id):
@@ -114,4 +117,3 @@ def delete_sub(sub_id):
 
 if __name__ == "__main__":
     app.run(debug=True)
-
