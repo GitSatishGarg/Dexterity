@@ -159,19 +159,19 @@ def create_tables():
         )
     """)
 
-    # Check if user_id exists, add if missing
     cur.execute("""
-        DO $$
-        BEGIN
-            IF NOT EXISTS (
-                SELECT 1 FROM information_schema.columns 
-                WHERE table_name='events' AND column_name='user_id'
-            ) THEN
-                ALTER TABLE events ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE CASCADE;
-            END IF;
-        END
-        $$;
+    DO $$
+    BEGIN
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns 
+            WHERE table_name='events' AND column_name='user_id'
+        ) THEN
+            ALTER TABLE events ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE CASCADE;
+        END IF;
+    END
+    $$;
     """)
+
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS sub_events (
