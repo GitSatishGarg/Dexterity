@@ -52,13 +52,16 @@ def authenticate_user(username, password):
     return row[0] if row else None
 
 # ---------------- EVENTS ----------------
-def get_all_events(user_id):
+def get_all_events(user_id=None):
     conn = get_connection()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-    cur.execute(
-        "SELECT * FROM events WHERE user_id=%s ORDER BY date",
-        (user_id,)
-    )
+    try:
+        if user_id:
+            cur.execute("SELECT * FROM events WHERE user_id=%s ORDER BY date", (user_id,))
+        else:
+            cur.execute("SELECT * FROM events ORDER BY date")
+    except psycopg2.errors.UndefinedColumn:
+        cur.execute("SELECT * FROM events ORDER BY date")
     events = cur.fetchall()
     cur.close()
     conn.close()
@@ -136,48 +139,31 @@ def delete_sub_event(sub_id):
     cur.close()
     conn.close()
 
-# ---------------- INIT TABLES ----------------
-def create_tables():
+# ---------------- RESET TABLES ----------------
+def reset_events_table():
+    """Drops events and sub_events and recreates them with user_id."""
     conn = get_connection()
     cur = conn.cursor()
-
-    # Users table
+    
+    # Drop tables (will delete all existing events/sub-events)
+    cur.execute("DROP TABLE IF EXISTS sub_events CASCADE")
+    cur.execute("DROP TABLE IF EXISTS events CASCADE")
+    
+    # Recreate events with user_id
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE events (
             id SERIAL PRIMARY KEY,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )
-    """)
-
-    # Events table
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS events (
-            id SERIAL PRIMARY KEY,
+            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
             name TEXT NOT NULL,
             date DATE NOT NULL,
             location TEXT NOT NULL,
             description TEXT
         )
     """)
-
-    # Ensure user_id exists
+    
+    # Recreate sub_events
     cur.execute("""
-    DO $$
-    BEGIN
-        IF NOT EXISTS (
-            SELECT 1 FROM information_schema.columns 
-            WHERE table_name='events' AND column_name='user_id'
-        ) THEN
-            ALTER TABLE events ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE CASCADE;
-        END IF;
-    END
-    $$;
-    """)
-
-    # Sub-events table
-    cur.execute("""
-        CREATE TABLE IF NOT EXISTS sub_events (
+        CREATE TABLE sub_events (
             id SERIAL PRIMARY KEY,
             event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
             name TEXT NOT NULL,
@@ -187,31 +173,26 @@ def create_tables():
             teacher TEXT
         )
     """)
-
+    
     conn.commit()
     cur.close()
     conn.close()
 
-def ensure_user_id_column():
+# ---------------- CREATE USERS TABLE ----------------
+def create_tables():
     conn = get_connection()
     cur = conn.cursor()
-
-    # Check if user_id column exists
     cur.execute("""
-        SELECT column_name 
-        FROM information_schema.columns 
-        WHERE table_name='events' AND column_name='user_id'
+        CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
     """)
-    if not cur.fetchone():
-        # Column doesn't exist — create it
-        cur.execute("ALTER TABLE events ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE CASCADE")
-        conn.commit()
-
+    conn.commit()
     cur.close()
     conn.close()
 
-
 if __name__ == "__main__":
-    create_tables()          # create tables if missing
-    ensure_user_id_column()  # make sure user_id exists
-
+    create_tables()
+    reset_events_table()  # rebuilds events + sub_events

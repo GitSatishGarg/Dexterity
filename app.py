@@ -4,6 +4,10 @@ import database
 app = Flask(__name__)
 app.secret_key = "supersecretkey"  # change in production
 
+# ---------------- INIT ----------------
+database.create_tables()
+database.reset_events_table()  # ensures events table has user_id
+
 # ---------------- LOGIN / REGISTER ----------------
 @app.route("/register", methods=["POST"])
 def register():
@@ -98,5 +102,4 @@ def delete_sub(sub_id):
     return redirect("/")
 
 if __name__ == "__main__":
-    database.create_tables()  # ensures all tables & columns exist
     app.run(debug=True)
