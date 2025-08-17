@@ -99,5 +99,5 @@ def delete_sub(sub_id):
     return redirect("/")
 
 if __name__ == "__main__":
-    database.create_tables()  # ensure tables exist
+    database.create_tables()  # ensures all tables & columns exist
     app.run(debug=True)

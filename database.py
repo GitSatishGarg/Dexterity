@@ -3,7 +3,7 @@ import psycopg2
 import psycopg2.extras
 from urllib.parse import urlparse
 
-# Parse DATABASE_URL from environment
+# ---------------- DATABASE CONNECTION ----------------
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if not DATABASE_URL:
     raise Exception("DATABASE_URL not set in environment variables.")
@@ -140,6 +140,7 @@ def delete_sub_event(sub_id):
 def create_tables():
     conn = get_connection()
     cur = conn.cursor()
+
     # Users table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
@@ -148,17 +149,21 @@ def create_tables():
             password TEXT NOT NULL
         )
     """)
+
     # Events table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS events (
             id SERIAL PRIMARY KEY,
-            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
             name TEXT NOT NULL,
             date DATE NOT NULL,
             location TEXT NOT NULL,
             description TEXT
         )
     """)
+
+    # Ensure user_id column exists
+    cur.execute("ALTER TABLE events ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id) ON DELETE CASCADE")
+
     # Sub-events table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS sub_events (
@@ -174,6 +179,7 @@ def create_tables():
     conn.commit()
     cur.close()
     conn.close()
+
 
 if __name__ == "__main__":
     create_tables()
