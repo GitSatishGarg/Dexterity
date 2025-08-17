@@ -61,6 +61,7 @@ def get_all_events(user_id=None):
         else:
             cur.execute("SELECT * FROM events ORDER BY date")
     except psycopg2.errors.UndefinedColumn:
+        # fallback if user_id column is missing
         cur.execute("SELECT * FROM events ORDER BY date")
     events = cur.fetchall()
     cur.close()
@@ -153,7 +154,7 @@ def create_tables():
         )
     """)
 
-    # Events table (without user_id first)
+    # Events table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS events (
             id SERIAL PRIMARY KEY,
@@ -172,8 +173,7 @@ def create_tables():
             name TEXT NOT NULL,
             contact TEXT,
             num_participants INTEGER,
-            participants TEXT,
-            teacher TEXT
+            participants TEXT
         )
     """)
 
@@ -181,29 +181,27 @@ def create_tables():
     cur.close()
     conn.close()
 
-# ---------------- ENSURE user_id COLUMN ----------------
-def ensure_user_id_column():
+# ---------------- ENSURE COLUMNS ----------------
+def ensure_column(table, column, col_type, references=None):
     conn = get_connection()
     cur = conn.cursor()
-
-    # Check if user_id exists
-    cur.execute("""
+    ref_sql = f"REFERENCES {references} ON DELETE CASCADE" if references else ""
+    cur.execute(f"""
         SELECT column_name 
         FROM information_schema.columns 
-        WHERE table_name='events' AND column_name='user_id'
-    """)
+        WHERE table_name=%s AND column_name=%s
+    """, (table, column))
     if not cur.fetchone():
-        # Add user_id safely
-        cur.execute("ALTER TABLE events ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE CASCADE")
+        cur.execute(f"ALTER TABLE {table} ADD COLUMN {column} {col_type} {ref_sql}")
         conn.commit()
-
     cur.close()
     conn.close()
 
-# ---------------- INIT ----------------
 def init_db():
     create_tables()
-    ensure_user_id_column()
+    # Ensure all known columns exist
+    ensure_column('events', 'user_id', 'INTEGER', references='users(id)')
+    ensure_column('sub_events', 'teacher', 'TEXT')
 
 if __name__ == "__main__":
     init_db()
