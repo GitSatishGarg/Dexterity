@@ -139,31 +139,34 @@ def delete_sub_event(sub_id):
     cur.close()
     conn.close()
 
-# ---------------- RESET TABLES ----------------
-def reset_events_table():
-    """Drops events and sub_events and recreates them with user_id."""
+# ---------------- CREATE TABLES ----------------
+def create_tables():
     conn = get_connection()
     cur = conn.cursor()
-    
-    # Drop tables (will delete all existing events/sub-events)
-    cur.execute("DROP TABLE IF EXISTS sub_events CASCADE")
-    cur.execute("DROP TABLE IF EXISTS events CASCADE")
-    
-    # Recreate events with user_id
+
+    # Users table
     cur.execute("""
-        CREATE TABLE events (
+        CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
-            user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    """)
+
+    # Events table (without user_id first)
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS events (
+            id SERIAL PRIMARY KEY,
             name TEXT NOT NULL,
             date DATE NOT NULL,
             location TEXT NOT NULL,
             description TEXT
         )
     """)
-    
-    # Recreate sub_events
+
+    # Sub-events table
     cur.execute("""
-        CREATE TABLE sub_events (
+        CREATE TABLE IF NOT EXISTS sub_events (
             id SERIAL PRIMARY KEY,
             event_id INTEGER NOT NULL REFERENCES events(id) ON DELETE CASCADE,
             name TEXT NOT NULL,
@@ -173,26 +176,34 @@ def reset_events_table():
             teacher TEXT
         )
     """)
-    
+
     conn.commit()
     cur.close()
     conn.close()
 
-# ---------------- CREATE USERS TABLE ----------------
-def create_tables():
+# ---------------- ENSURE user_id COLUMN ----------------
+def ensure_user_id_column():
     conn = get_connection()
     cur = conn.cursor()
+
+    # Check if user_id exists
     cur.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id SERIAL PRIMARY KEY,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )
+        SELECT column_name 
+        FROM information_schema.columns 
+        WHERE table_name='events' AND column_name='user_id'
     """)
-    conn.commit()
+    if not cur.fetchone():
+        # Add user_id safely
+        cur.execute("ALTER TABLE events ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE CASCADE")
+        conn.commit()
+
     cur.close()
     conn.close()
 
-if __name__ == "__main__":
+# ---------------- INIT ----------------
+def init_db():
     create_tables()
-    reset_events_table()  # rebuilds events + sub_events
+    ensure_user_id_column()
+
+if __name__ == "__main__":
+    init_db()

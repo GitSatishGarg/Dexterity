@@ -5,8 +5,7 @@ app = Flask(__name__)
 app.secret_key = "supersecretkey"  # change in production
 
 # ---------------- INIT ----------------
-database.create_tables()
-database.reset_events_table()  # ensures events table has user_id
+database.init_db()  # safe startup, no data deleted
 
 # ---------------- LOGIN / REGISTER ----------------
 @app.route("/register", methods=["POST"])
@@ -41,7 +40,7 @@ def logout():
 def index():
     user_id = session.get("user_id")
     username = session.get("username")
-    events = database.get_all_events(user_id) if user_id else []
+    events = database.get_all_events(user_id) if user_id else database.get_all_events()
     return render_template("index.html", username=username, events=events)
 
 @app.route("/add", methods=["POST"])
