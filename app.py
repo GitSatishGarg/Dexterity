@@ -71,6 +71,20 @@ def delete(event_id):
     database.delete_event(event_id)
     return redirect("/")
 
+@app.route("/edit_event", methods=["POST"])
+def edit():
+    old_id = request.form.get("old_id")
+    name = request.form["name"]
+    date = request.form["date"]
+    location = request.form["location"]
+    description = request.form["description"]
+
+    if old_id:
+        database.update_event(username=session["username"], event_id=int(old_id),
+                              name=name, date=date, location=location, description=description)
+    return redirect(url_for("events_page"))
+
+
 # ---------------- SUB-EVENTS ----------------
 @app.route("/get_sub_events/<int:event_id>", methods=["GET"])
 def get_sub_events(event_id):
@@ -117,3 +131,4 @@ def delete_sub(sub_id):
 
 if __name__ == "__main__":
     app.run(debug=True)
+

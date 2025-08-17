@@ -83,7 +83,8 @@
 <section class="contact-us fly">
     <div class="contact">
         <h2>Edit Event</h2>
-        <form id="editForm" method="post" action="{{ url_for('add') }}">
+        <form id="editForm" method="post" action="{{ url_for('edit') }}">
+
             <select id="editSelect" required>
                 <option value="">-- Select Event to Edit --</option>
                 {% for e in events %}
