@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, session, jsonify
 import database
 
 app = Flask(__name__)
-app.secret_key = "supersecretkey"  # change in production
+app.secret_key = "supersecretkey"
 
 # ---------------- INIT ----------------
 database.init_db()  # safe startup, no data deleted
@@ -53,7 +53,7 @@ def add():
     date = request.form.get("date")
     location = request.form.get("location")
     description = request.form.get("description") or ""
-    old_id = request.form.get("old_id")  # this must be sent from the edit form
+    old_id = request.form.get("old_id")
 
     if old_id:  # Edit existing event
         try:
@@ -65,7 +65,6 @@ def add():
         database.add_event(user_id, name, date, location, description)
 
     return redirect("/")
-
 
 @app.route("/delete/<int:event_id>", methods=["POST"])
 def delete(event_id):
@@ -88,12 +87,10 @@ def add_sub():
     if not name:
         return "Sub-event name required", 400
 
-    # Optional fields
     contact = request.form.get("contact") or None
     participants = request.form.get("participants") or None
     teacher = request.form.get("teacher") or None
 
-    # Convert num_participants safely
     num_participants = request.form.get("num_participants")
     if num_participants:
         try:
@@ -104,15 +101,14 @@ def add_sub():
         num_participants = None
 
     sub_id = request.form.get("sub_id")
-    if sub_id:  # Edit
+    if sub_id:  # Edit sub-event
         database.edit_sub_event(
             int(sub_id), int(event_id), name, contact, num_participants, participants, teacher
         )
-    else:       # Add
+    else:       # Add sub-event
         database.add_sub_event(int(event_id), name, contact, num_participants, participants, teacher)
 
     return redirect("/")
-
 
 @app.route("/delete_sub/<int:sub_id>", methods=["POST"])
 def delete_sub(sub_id):
