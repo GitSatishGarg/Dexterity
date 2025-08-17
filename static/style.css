@@ -322,7 +322,7 @@ h4 {
     border-radius: 10px;
 }
 
-.contact select{
+select{
     outline: none;
     margin: 0 0 15px 0;
     padding: 15px;   
@@ -409,3 +409,46 @@ h4 {
     background-color: #c1121f;
 }
 
+#authOverlay {
+    background: #0000008c;
+}
+
+#authOverlay div {
+    background-color: #142053;
+    color: white;
+}
+
+#authOverlay input{
+    outline: none;
+    margin: 0 0 15px 0;
+    padding: 15px;
+    width: 100%;    
+    height: 50px;      /* same height for inputs and button */
+    box-sizing: border-box;
+    margin: 0;          /* remove any extra spacing */
+    vertical-align: middle;
+    border: 1px solid lightgray;
+    background: none;
+    color: white;
+    border-radius: 10px;
+}
+#authOverlay button{
+    outline: none;
+    box-sizing: border-box;
+    border-radius: 10px;
+    color: #263E9D;
+    border: 2px solid #263E9D;
+    background: white;
+    width: 200px;
+    height: 50px;
+    transition: all 0.2s ease-in-out;
+}
+
+#authOverlay button:hover{
+    box-shadow: 0 0 15px #263E9D;
+}
+
+#authOverlay button:active {
+    background: #263E9D;
+    color: white;
+}

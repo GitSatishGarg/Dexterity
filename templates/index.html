@@ -15,12 +15,13 @@
         <a href="home.html"><img src="" class=""></a>
         <div class="head-links" id="headLinks">
            <i class="fa fa-times" onclick="hideMenu()"></i>
-            <ul>
-                <li><a href="">These</a></li>
-                <li><a href="">Do</a></li>
-                <li><a href="">Not</a></li>
-                <li><a href="">Work</a></li>
-            </ul>
+<ul>
+  {% if username %}
+    <li><a href="{{ url_for('logout') }}">Logout ({{ username }})</a></li>
+  {% else %}
+    <li><a href="#" onclick="openAuthModal()">Login/Register</a></li>
+  {% endif %}
+</ul>
         </div>
         <i class="fa fa-bars" style="float: right;" onclick="showMenu()"></i>
     </nav>
@@ -66,8 +67,6 @@
                             <button type="submit" class="delete-btn">Delete</button>
                         </form>
                     </td>
-
-
                 </tr>
                 {% endfor %}
             {% else %}
@@ -78,6 +77,7 @@
         </table>
     </div>
 </section>
+
 <!-- Edit Event Form -->
 <section class="contact-us fly">
     <div class="contact">
@@ -93,12 +93,108 @@
             <input type="date" name="date" required>
             <input type="text" name="location" placeholder="Location" required>
             <input type="text" name="description" placeholder="Description">
-            <!-- Hidden input to store the old event ID -->
             <input type="hidden" name="old_id" id="old_id" value="">
             <button type="submit" class="edit-button">Edit Event</button>
         </form>
     </div>
 </section>
+
+<!-- Show Sub-Events based on Main Event -->
+<section class="table">
+    <h2>View Sub-Events</h2>
+    <select id="main_event">
+      <option value="">-- Select Event --</option>
+      {% for event in events %}
+        <option value="{{ event.id }}">{{ event.name }}</option>
+      {% endfor %}
+    </select>
+
+    <div id="sub_event_list" style="margin-top:15px;">
+      <p>No event selected</p>
+    </div>
+</section>
+
+
+<!-- Sub-Events Form -->
+<section class="contact-us fly">
+    <div class="contact">
+        <h2>Add Sub-Events</h2>
+        <form action="{{ url_for('add_sub') }}" method="post">
+            <select name="event_id" required>
+                <option value="">-- Select Main Event --</option>
+                {% for e in events %}
+                    <option value="{{ e.id }}">{{ e.name }} ({{ e.date }})</option>
+                {% endfor %}
+            </select>
+            <input type="text" name="name" placeholder="Sub-event name" required>
+            <input type="text" name="contact" placeholder="Contact person">
+            <input type="number" name="num_participants" placeholder="No. of Participants">
+            <input type="text" name="participants" placeholder="Names of Participants">
+            <input type="text" name="teacher" placeholder="Teacher in Charge">
+            <button type="submit" class="submit-button">Add Sub-Event</button>
+        </form>
+    </div>
+</section>
+
+<!-- Edit Sub-Event Form -->
+<section class="contact-us fly">
+    <div class="contact">
+        <h2>Edit Sub-Event</h2>
+        <form id="editSubForm" method="post" action="{{ url_for('add_sub') }}">
+            <select id="editSubEventSelect" required>
+                <option value="">-- Select Main Event --</option>
+                {% for e in events %}
+                    <option value="{{ e.id }}">{{ e.name }} ({{ e.date }})</option>
+                {% endfor %}
+            </select>
+
+            <select id="editSubSelect" required>
+                <option value="">-- Select Sub-Event --</option>
+            </select>
+
+            <input type="hidden" name="sub_id" id="sub_id" value="">
+            <input type="hidden" name="event_id" id="sub_event_id" value="">
+
+            <input type="text" name="name" placeholder="Sub-event name" required>
+            <input type="text" name="contact" placeholder="Contact person">
+            <input type="number" name="num_participants" placeholder="No. of Participants">
+            <input type="text" name="participants" placeholder="Names of Participants">
+            <input type="text" name="teacher" placeholder="Teacher in Charge">
+
+            <button type="submit" class="edit-button">Edit Sub-Event</button>
+        </form>
+    </div>
+</section>
+
+<div id="authOverlay" style="display: {% if not username %}flex{% else %}none{% endif %};
+    position: fixed; top:0; left:0; width:100%; height:100%;z-index:1000; align-items:center; justify-content:center;">
+  
+  <div style="padding:25px; border-radius:12px; width:350px; text-align:center;">
+    <h2>Login</h2>
+    <form action="{{ url_for('login') }}" method="post">
+      <input type="text" name="username" placeholder="Username" required style="width:90%; margin:8px 0;"><br>
+      <input type="password" name="password" placeholder="Password" required style="width:90%; margin:8px 0;"><br>
+      <button type="submit" style="margin-top:10px;">Login</button>
+    </form>
+
+    <hr style="margin:20px 0;">
+
+    <h2>Register</h2>
+    <form action="{{ url_for('register') }}" method="post">
+      <input type="text" name="username" placeholder="Username" required style="width:90%; margin:8px 0;"><br>
+      <input type="password" name="password" placeholder="Password" required style="width:90%; margin:8px 0;"><br>
+      <button type="submit" style="margin-top:10px;">Register</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function openAuthModal() {
+  document.getElementById("authOverlay").style.display = "flex";
+}
+</script>
+
+
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
@@ -117,15 +213,119 @@ document.addEventListener("DOMContentLoaded", () => {
             oldIdInput.value = '';
             return;
         }
-
         const event = jsEvents.find(ev => ev.id === selectedId || ev['id'] === selectedId);
         if (!event) return;
-
-        editForm.name.value = event.name || event['name'];
-        editForm.date.value = event.date || event['date'];
-        editForm.location.value = event.location || event['location'];
-        editForm.description.value = event.description || event['description'] || '';
+        editForm.name.value = event.name || '';
+        editForm.date.value = event.date || '';
+        editForm.location.value = event.location || '';
+        editForm.description.value = event.description || '';
         oldIdInput.value = selectedId;
+    });
+});
+</script>
+
+<script>
+document.getElementById("main_event").addEventListener("change", function() {
+    let eventId = this.value;
+    let subDiv = document.getElementById("sub_event_list");
+
+    if (!eventId) {
+        subDiv.innerHTML = "<p>No event selected</p>";
+        return;
+    }
+
+    fetch(`/get_sub_events/${eventId}`)
+      .then(res => res.json())
+      .then(data => {
+          if (data.length === 0) {
+              subDiv.innerHTML = "<p>No sub-events found</p>";
+              return;
+          }
+
+          let html = `<table width="100%" cellpadding="10" cellspacing="0" border="1">
+              <tr>
+                <th>ID</th><th>Name</th><th>Contact</th><th>No. Participants</th>
+                <th>Participants</th><th>Teacher</th><th>Action</th>
+              </tr>`;
+          data.forEach(sub => {
+              html += `<tr>
+                <td>${sub.id}</td>
+                <td>${sub.name}</td>
+                <td>${sub.contact || '-'}</td>
+                <td>${sub.num_participants || '-'}</td>
+                <td>${sub.participants || '-'}</td>
+                <td>${sub.teacher || '-'}</td>
+                <td style="text-align:center;">
+                    <form action="/delete_sub/${sub.id}" method="post" style="display:inline;">
+                        <button type="submit" class="delete-btn">Delete</button>
+                    </form>
+                </td>
+              </tr>`;
+          });
+          html += "</table>";
+          subDiv.innerHTML = html;
+      })
+      .catch(err => {
+          console.error(err);
+          subDiv.innerHTML = "<p>Error loading sub-events</p>";
+      });
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const editSubEventSelect = document.getElementById("editSubEventSelect");
+    const editSubSelect = document.getElementById("editSubSelect");
+    const editSubForm = document.getElementById("editSubForm");
+
+    // When a main event is chosen in the edit form → load its sub-events
+    editSubEventSelect.addEventListener("change", () => {
+        let eventId = editSubEventSelect.value;
+        editSubSelect.innerHTML = '<option value="">-- Select Sub-Event --</option>';
+
+        if (!eventId) return;
+
+        fetch(`/get_sub_events/${eventId}`)
+          .then(res => res.json())
+          .then(data => {
+              if (data.length === 0) {
+                  editSubSelect.innerHTML = '<option value="">No sub-events found</option>';
+                  return;
+              }
+              data.forEach(sub => {
+                  let opt = document.createElement("option");
+                  opt.value = sub.id;
+                  opt.textContent = sub.name;
+                  opt.dataset.contact = sub.contact || "";
+                  opt.dataset.num_participants = sub.num_participants || "";
+                  opt.dataset.participants = sub.participants || "";
+                  opt.dataset.teacher = sub.teacher || "";
+                  editSubSelect.appendChild(opt);
+              });
+          })
+          .catch(err => console.error(err));
+    });
+
+    // When a sub-event is chosen → populate form fields
+    editSubSelect.addEventListener("change", () => {
+        let selected = editSubSelect.options[editSubSelect.selectedIndex];
+        if (!selected.value) {
+            editSubForm.sub_id.value = "";
+            editSubForm.event_id.value = "";
+            editSubForm.name.value = "";
+            editSubForm.contact.value = "";
+            editSubForm.num_participants.value = "";
+            editSubForm.participants.value = "";
+            editSubForm.teacher.value = "";
+            return;
+        }
+        editSubForm.sub_id.value = selected.value;
+        editSubForm.event_id.value = editSubEventSelect.value;
+        editSubForm.name.value = selected.textContent;
+        editSubForm.contact.value = selected.dataset.contact;
+        editSubForm.num_participants.value = selected.dataset.num_participants;
+        editSubForm.participants.value = selected.dataset.participants;
+        editSubForm.teacher.value = selected.dataset.teacher;
     });
 });
 </script>
