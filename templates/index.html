@@ -100,20 +100,6 @@
     </div>
 </section>
  -->
-<!-- View Sub-Events -->
-<section class="table">
-    <h2>View Sub-Events</h2>
-    <select id="main_event">
-      <option value="">-- Select Event --</option>
-      {% for event in events %}
-        <option value="{{ event.id }}">{{ event.name }}</option>
-      {% endfor %}
-    </select>
-
-    <div id="sub_event_list" style="margin-top:15px;">
-      <p>No event selected</p>
-    </div>
-</section>
 
 <!-- Add Sub-Event Form -->
 <section class="contact-us fly">
@@ -133,6 +119,19 @@
             <input type="text" name="teacher" placeholder="Teacher in Charge">
             <button type="submit" class="submit-button">Add Sub-Event</button>
         </form>
+    </div>
+</section>
+
+<!-- View Sub-Events -->
+<section class="table">
+    <select id="main_event">
+      <option value="">-- Select Event --</option>
+      {% for event in events %}
+        <option value="{{ event.id }}">{{ event.name }}</option>
+      {% endfor %}
+    </select>
+    <div id="sub_event_list" style="margin-top:15px;">
+      <p>No event selected</p>
     </div>
 </section>
 
