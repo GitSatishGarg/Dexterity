@@ -98,6 +98,7 @@
     <button type="submit" class="edit-button">Edit Event</button>
 </form>
 
+
     </div>
 </section>
 
@@ -195,9 +196,8 @@ function openAuthModal() {
 <!-- Event Edit Script -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    const jsEvents = {{ events | tojson | safe }};
+    const jsEvents = {{ events | tojson | safe }} || [];
     const editSelect = document.getElementById('editSelect');
-
     const editName = document.getElementById('editName');
     const editDate = document.getElementById('editDate');
     const editLocation = document.getElementById('editLocation');
@@ -216,6 +216,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const event = jsEvents.find(ev => parseInt(ev.id) === selectedId);
         if (!event) return;
+
         editName.value = event.name || '';
         editDate.value = event.date || '';
         editLocation.value = event.location || '';
@@ -223,7 +224,6 @@ document.addEventListener("DOMContentLoaded", () => {
         oldIdInput.value = selectedId;
     });
 });
-
 </script>
 
 <!-- Sub-Event View Script -->
