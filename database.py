@@ -141,7 +141,6 @@ def create_tables():
     conn = get_connection()
     cur = conn.cursor()
 
-    # Users table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
@@ -150,7 +149,6 @@ def create_tables():
         )
     """)
 
-    # Events table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS events (
             id SERIAL PRIMARY KEY,
@@ -161,10 +159,20 @@ def create_tables():
         )
     """)
 
-    # Ensure user_id column exists
-    cur.execute("ALTER TABLE events ADD COLUMN IF NOT EXISTS user_id INTEGER REFERENCES users(id) ON DELETE CASCADE")
+    # Check if user_id exists, add if missing
+    cur.execute("""
+        DO $$
+        BEGIN
+            IF NOT EXISTS (
+                SELECT 1 FROM information_schema.columns 
+                WHERE table_name='events' AND column_name='user_id'
+            ) THEN
+                ALTER TABLE events ADD COLUMN user_id INTEGER REFERENCES users(id) ON DELETE CASCADE;
+            END IF;
+        END
+        $$;
+    """)
 
-    # Sub-events table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS sub_events (
             id SERIAL PRIMARY KEY,
@@ -176,10 +184,10 @@ def create_tables():
             teacher TEXT
         )
     """)
+
     conn.commit()
     cur.close()
     conn.close()
-
 
 if __name__ == "__main__":
     create_tables()
