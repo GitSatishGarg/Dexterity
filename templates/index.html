@@ -84,19 +84,20 @@
     <div class="contact">
         <h2>Edit Event</h2>
         <form id="editForm" method="post" action="{{ url_for('add') }}">
-            <select id="editSelect" required>
-                <option value="">-- Select Event to Edit --</option>
-                {% for e in events %}
-                    <option value="{{ e.id }}">{{ e.name }} ({{ e.date }})</option>
-                {% endfor %}
-            </select>
-            <input type="text" name="name" placeholder="Event name" required>
-            <input type="date" name="date" required>
-            <input type="text" name="location" placeholder="Location" required>
-            <input type="text" name="description" placeholder="Description">
-            <input type="hidden" name="old_id" id="old_id" value="">
-            <button type="submit" class="edit-button">Edit Event</button>
-        </form>
+    <select id="editSelect" required>
+        <option value="">-- Select Event to Edit --</option>
+        {% for e in events %}
+            <option value="{{ e.id }}">{{ e.name }} ({{ e.date }})</option>
+        {% endfor %}
+    </select>
+    <input type="text" id="editName" name="name" placeholder="Event name" required>
+    <input type="date" id="editDate" name="date" required>
+    <input type="text" id="editLocation" name="location" placeholder="Location" required>
+    <input type="text" id="editDescription" name="description" placeholder="Description">
+    <input type="hidden" name="old_id" id="old_id" value="">
+    <button type="submit" class="edit-button">Edit Event</button>
+</form>
+
     </div>
 </section>
 
@@ -196,28 +197,33 @@ function openAuthModal() {
 document.addEventListener("DOMContentLoaded", () => {
     const jsEvents = {{ events | tojson | safe }};
     const editSelect = document.getElementById('editSelect');
-    const editForm = document.getElementById('editForm');
+
+    const editName = document.getElementById('editName');
+    const editDate = document.getElementById('editDate');
+    const editLocation = document.getElementById('editLocation');
+    const editDescription = document.getElementById('editDescription');
     const oldIdInput = document.getElementById('old_id');
 
     editSelect.addEventListener('change', () => {
         const selectedId = parseInt(editSelect.value);
         if (!selectedId) {
-            editForm.name.value = '';
-            editForm.date.value = '';
-            editForm.location.value = '';
-            editForm.description.value = '';
+            editName.value = '';
+            editDate.value = '';
+            editLocation.value = '';
+            editDescription.value = '';
             oldIdInput.value = '';
             return;
         }
         const event = jsEvents.find(ev => parseInt(ev.id) === selectedId);
         if (!event) return;
-        editForm.name.value = event.name || '';
-        editForm.date.value = event.date || '';
-        editForm.location.value = event.location || '';
-        editForm.description.value = event.description || '';
+        editName.value = event.name || '';
+        editDate.value = event.date || '';
+        editLocation.value = event.location || '';
+        editDescription.value = event.description || '';
         oldIdInput.value = selectedId;
     });
 });
+
 </script>
 
 <!-- Sub-Event View Script -->
