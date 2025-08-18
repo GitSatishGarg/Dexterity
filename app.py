@@ -4,10 +4,8 @@ import database
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
 
-# ---------------- INIT ----------------
-database.init_db()  # safe startup, no data deleted
+database.init_db()
 
-# ---------------- LOGIN / REGISTER ----------------
 @app.route("/register", methods=["POST"])
 def register():
     username = request.form["username"]
@@ -35,7 +33,6 @@ def logout():
     session.clear()
     return redirect("/")
 
-# ---------------- EVENTS ----------------
 @app.route("/", methods=["GET"])
 def index():
     user_id = session.get("user_id")
@@ -55,20 +52,18 @@ def add():
     description = request.form.get("description") or ""
     old_id = request.form.get("old_id")
 
-    if old_id:  # Edit existing event
+    if old_id:
         database.edit_event(int(old_id), name, date, location, description)
-    else:       # Add new event
+    else:
         database.add_event(user_id, name, date, location, description)
 
     return redirect("/")
-
 
 @app.route("/delete/<int:event_id>", methods=["POST"])
 def delete(event_id):
     database.delete_event(event_id)
     return redirect("/")
 
-# ---------------- SUB-EVENTS ----------------
 @app.route("/get_sub_events/<int:event_id>", methods=["GET"])
 def get_sub_events(event_id):
     subs = database.get_sub_events(event_id)
@@ -98,11 +93,11 @@ def add_sub():
         num_participants = None
 
     sub_id = request.form.get("sub_id")
-    if sub_id:  # Edit sub-event
+    if sub_id:
         database.edit_sub_event(
             int(sub_id), int(event_id), name, contact, num_participants, participants, teacher
         )
-    else:       # Add sub-event
+    else:
         database.add_sub_event(int(event_id), name, contact, num_participants, participants, teacher)
 
     return redirect("/")
@@ -114,4 +109,3 @@ def delete_sub(sub_id):
 
 if __name__ == "__main__":
     app.run(debug=True)
-

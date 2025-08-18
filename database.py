@@ -3,7 +3,6 @@ import psycopg2
 import psycopg2.extras
 from urllib.parse import urlparse
 
-# ---------------- DATABASE CONNECTION ----------------
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if not DATABASE_URL:
     raise Exception("DATABASE_URL not set in environment variables.")
@@ -12,7 +11,7 @@ url = urlparse(DATABASE_URL)
 DB_PARAMS = {
     'host': url.hostname,
     'port': url.port or 5432,
-    'dbname': url.path[1:],  # remove leading '/'
+    'dbname': url.path[1:],
     'user': url.username,
     'password': url.password
 }
@@ -20,7 +19,6 @@ DB_PARAMS = {
 def get_connection():
     return psycopg2.connect(**DB_PARAMS)
 
-# ---------------- USERS ----------------
 def create_user(username, password):
     conn = get_connection()
     cur = conn.cursor()
@@ -51,7 +49,6 @@ def authenticate_user(username, password):
     conn.close()
     return row[0] if row else None
 
-# ---------------- EVENTS ----------------
 def get_all_events(user_id=None):
     conn = get_connection()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -61,7 +58,6 @@ def get_all_events(user_id=None):
         else:
             cur.execute("SELECT * FROM events ORDER BY date")
     except psycopg2.errors.UndefinedColumn:
-        # fallback if user_id column is missing
         cur.execute("SELECT * FROM events ORDER BY date")
     events = cur.fetchall()
     cur.close()
@@ -98,7 +94,6 @@ def delete_event(event_id):
     cur.close()
     conn.close()
 
-# ---------------- SUB-EVENTS ----------------
 def get_sub_events(event_id):
     conn = get_connection()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
@@ -140,12 +135,9 @@ def delete_sub_event(sub_id):
     cur.close()
     conn.close()
 
-# ---------------- CREATE TABLES ----------------
 def create_tables():
     conn = get_connection()
     cur = conn.cursor()
-
-    # Users table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
@@ -153,8 +145,6 @@ def create_tables():
             password TEXT NOT NULL
         )
     """)
-
-    # Events table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS events (
             id SERIAL PRIMARY KEY,
@@ -164,8 +154,6 @@ def create_tables():
             description TEXT
         )
     """)
-
-    # Sub-events table
     cur.execute("""
         CREATE TABLE IF NOT EXISTS sub_events (
             id SERIAL PRIMARY KEY,
@@ -176,17 +164,15 @@ def create_tables():
             participants TEXT
         )
     """)
-
     conn.commit()
     cur.close()
     conn.close()
 
-# ---------------- ENSURE COLUMNS ----------------
 def ensure_column(table, column, col_type, references=None):
     conn = get_connection()
     cur = conn.cursor()
     ref_sql = f"REFERENCES {references} ON DELETE CASCADE" if references else ""
-    cur.execute(f"""
+    cur.execute("""
         SELECT column_name 
         FROM information_schema.columns 
         WHERE table_name=%s AND column_name=%s
@@ -199,7 +185,6 @@ def ensure_column(table, column, col_type, references=None):
 
 def init_db():
     create_tables()
-    # Ensure all known columns exist
     ensure_column('events', 'user_id', 'INTEGER', references='users(id)')
     ensure_column('sub_events', 'teacher', 'TEXT')
 
