@@ -7,7 +7,7 @@ html, body {
 }
 
 body {
-    background: linear-gradient(rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+    background: linear-gradient(rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.5));
 }
 
 .header {
@@ -234,7 +234,7 @@ h4 {
 .subheader-contact {
     height: 50vh;
     width: 100%;
-    background-image: linear-gradient(rgba(0, 0, 0, 0.3),rgba(0, 0, 0, 1)),url(images/about.jpg);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5),rgba(0, 0, 0, 1)),url(images/about.jpg);
     background-position: center;
     background-size: cover;
     text-align: center;
