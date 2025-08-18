@@ -2,7 +2,7 @@ import sqlite3
 
 DB_NAME = "events.db"
 
-# ---------------- USERS TABLE ----------------
+
 def init_users_table():
     with sqlite3.connect(DB_NAME, timeout=10) as conn:
         c = conn.cursor()
@@ -16,7 +16,6 @@ def init_users_table():
         conn.commit()
 
 
-# ---------------- CREATE USER TABLES ----------------
 def create_user_events_table(username):
     events_table = f"events_{username}"
     sub_events_table = f"sub_events_{username}"
@@ -46,7 +45,6 @@ def create_user_events_table(username):
         conn.commit()
 
 
-# ---------------- USERS ----------------
 def add_user(username, password):
     init_users_table()
     with sqlite3.connect(DB_NAME, timeout=10) as conn:
@@ -54,6 +52,7 @@ def add_user(username, password):
         c.execute("INSERT INTO users (username, password) VALUES (?, ?)", (username, password))
         conn.commit()
     create_user_events_table(username)
+
 
 def get_user(username):
     init_users_table()
@@ -63,7 +62,6 @@ def get_user(username):
         return c.fetchone()
 
 
-# ---------------- EVENTS ----------------
 def add_event(username, name, date, location, description):
     create_user_events_table(username)
     table = f"events_{username}"
@@ -74,6 +72,7 @@ def add_event(username, name, date, location, description):
             (name, date, location, description),
         )
         conn.commit()
+
 
 def get_all_events(username):
     create_user_events_table(username)
@@ -87,6 +86,7 @@ def get_all_events(username):
         for r in rows
     ]
 
+
 def delete_event(username, event_id):
     create_user_events_table(username)
     table = f"events_{username}"
@@ -95,19 +95,19 @@ def delete_event(username, event_id):
         c.execute(f"DELETE FROM {table} WHERE id = ?", (event_id,))
         conn.commit()
 
+
 def update_event(username, event_id, name, date, location, description):
     create_user_events_table(username)
     table = f"events_{username}"
     with sqlite3.connect(DB_NAME, timeout=10) as conn:
         c = conn.cursor()
         c.execute(
-            f"""UPDATE {table} SET name=?, date=?, location=?, description=? WHERE id=?""",
+            f"UPDATE {table} SET name=?, date=?, location=?, description=? WHERE id=?",
             (name, date, location, description, event_id),
         )
         conn.commit()
 
 
-# ---------------- SUB-EVENTS ----------------
 def add_sub_event(username, event_id, name, contact, num_participants, participants, teacher_in_charge):
     create_user_events_table(username)
     table = f"sub_events_{username}"
@@ -120,6 +120,7 @@ def add_sub_event(username, event_id, name, contact, num_participants, participa
             (event_id, name, contact, num_participants, participants, teacher_in_charge),
         )
         conn.commit()
+
 
 def get_sub_events(username, event_id):
     create_user_events_table(username)
@@ -138,6 +139,7 @@ def get_sub_events(username, event_id):
         for r in rows
     ]
 
+
 def delete_sub_event(username, sub_event_id):
     create_user_events_table(username)
     table = f"sub_events_{username}"
@@ -145,6 +147,7 @@ def delete_sub_event(username, sub_event_id):
         c = conn.cursor()
         c.execute(f"DELETE FROM {table} WHERE id=?", (sub_event_id,))
         conn.commit()
+
 
 def update_sub_event(username, sub_event_id, name, contact, num_participants, participants, teacher_in_charge):
     create_user_events_table(username)
