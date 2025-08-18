@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, url_for, jsonify
+from flask import Flask, render_template, request, redirect, session, url_for, jsonify, send_file
 import database as database
 
 app = Flask(__name__)
@@ -106,6 +106,15 @@ def add_sub():
 def delete_sub(sub_id):
     database.delete_sub_event(sub_id)
     return redirect("/")
+
+@app.route("/export_events_csv")
+def export_events_csv():
+    if "user_id" not in session:
+        return redirect("/")
+    user_id = session["user_id"]
+    filename = database.export_events_to_csv(user_id)
+    return send_file(filename, as_attachment=True)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

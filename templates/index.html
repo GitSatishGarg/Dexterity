@@ -75,10 +75,12 @@
                     </tr>
                 {% endif %}
             </table>
-
-            <button onclick="exportTableToCSV('eventsTable', 'events.csv')" class="export-btn">Export Events to CSV</button>
-
         </div>
+
+        <a href="{{ url_for('export_events_csv') }}">
+        <button class="export-btn">Export Events to CSV</button>
+        </a>
+
     </section>
 
         <!-- Edit Event Form

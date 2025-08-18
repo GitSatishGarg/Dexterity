@@ -188,5 +188,24 @@ def init_db():
     ensure_column('events', 'user_id', 'INTEGER', references='users(id)')
     ensure_column('sub_events', 'teacher', 'TEXT')
 
+import csv
+
+def export_events_to_csv(user_id, filename="events.csv"):
+    """Export all events for the given user to a CSV file."""
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT id, name, date, location, description FROM events WHERE user_id=%s", (user_id,))
+    rows = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    with open(filename, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["ID", "Name", "Date", "Location", "Description"])
+        writer.writerows(rows)
+
+    return filename
+
+
 if __name__ == "__main__":
     init_db()
