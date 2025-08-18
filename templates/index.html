@@ -43,10 +43,10 @@
         </div>
     </section>
 
-    <section class="table">
-        <div style="border: 1px solid lightgray; border-radius: 10px; overflow: hidden; width: 100%;">
-            <table width="100%" cellpadding="10" cellspacing="0" align="center" style="border-collapse: collapse; border: 1px solid lightgray; text-align: center;">
-                <tr style="background: #f9f9f9;">
+        <section class="table">
+        <div>
+            <table id="events_table" width="100%" cellpadding="10" cellspacing="0" border="1">
+                <tr>
                     <th>ID</th>
                     <th>Name</th>
                     <th>Date</th>
@@ -62,7 +62,7 @@
                         <td>{{ e.date }}</td>
                         <td>{{ e.location }}</td>
                         <td>{{ e.description or '-' }}</td>
-                        <td>
+                        <td style="text-align:center;">
                             <form action="{{ url_for('delete', event_id=e.id) }}" method="post" style="display:inline;">
                                 <button type="submit" class="delete-btn">Delete</button>
                             </form>
@@ -77,30 +77,30 @@
             </table>
         </div>
 
-        <a href="{{ url_for('export_events_csv') }}">
-        <button class="export-btn">Export Events to CSV</button>
-        </a>
-
+        <button onclick="exportTableToCSV('events_table','events.csv')" class="export-btn">
+            Export Events to CSV
+        </button>
     </section>
 
-        <!-- Edit Event Form
+
+        <!-- 
         <section class="contact-us fly">
             <div class="contact">
                 <h2>Edit Event</h2>
                 <form id="editForm" method="post" action="{{ url_for('add') }}">
-            <select id="editSelect" required>
-                <option value="">-- Select Event to Edit --</option>
-                {% for e in events %}
-                    <option value="{{ e.id }}">{{ e.name }} ({{ e.date }})</option>
-                {% endfor %}
-            </select>
-            <input type="text" id="editName" name="name" placeholder="Event name" required>
-            <input type="date" id="editDate" name="date" required>
-            <input type="text" id="editLocation" name="location" placeholder="Location" required>
-            <input type="text" id="editDescription" name="description" placeholder="Description">
-            <input type="hidden" name="old_id" id="old_id" value="">
-            <button type="submit" class="edit-button">Edit Event</button>
-        </form>
+                    <select id="editSelect" required>
+                        <option value="">-- Select Event to Edit --</option>
+                        {% for e in events %}
+                            <option value="{{ e.id }}">{{ e.name }} ({{ e.date }})</option>
+                        {% endfor %}
+                    </select>
+                    <input type="text" id="editName" name="name" placeholder="Event name" required>
+                    <input type="date" id="editDate" name="date" required>
+                    <input type="text" id="editLocation" name="location" placeholder="Location" required>
+                    <input type="text" id="editDescription" name="description" placeholder="Description">
+                    <input type="hidden" name="old_id" id="old_id" value="">
+                    <button type="submit" class="edit-button">Edit Event</button>
+                </form>
             </div>
         </section>
         -->
