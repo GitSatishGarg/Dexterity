@@ -13,7 +13,7 @@ body {
 .header {
     min-height: 100vh;
     width: 100%;
-    background-image: linear-gradient(rgba(0, 3, 17, 0.3),rgba(0, 3, 17, 1)),url(images/home.jpg);
+    background-image: linear-gradient(rgba(0, 3, 17, 0.3),rgba(0, 3, 17, 1)),url(images/about.jpg);
     background-position: center;
     background-size: cover;
     position: relative;
