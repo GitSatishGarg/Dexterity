@@ -10,7 +10,6 @@
 </head>
 <body>
 
-<!-- Header -->
 <section class="subheader-contact">
     <nav>
         <a href="home.html"><img src="" class=""></a>
@@ -29,7 +28,6 @@
     <h1>Events</h1>
 </section>
 
-<!-- Add Event Form -->
 <section class="contact-us fly">
     <div class="contact">
         <h2>Add Event</h2>
@@ -43,7 +41,6 @@
     </div>
 </section>
 
-<!-- Events Table -->
 <section class="table">
     <div style="border: 1px solid lightgray; border-radius: 10px; overflow: hidden; width: 100%;">
         <table width="100%" cellpadding="25" cellspacing="0" align="center">
@@ -79,29 +76,6 @@
     </div>
 </section>
 
-<!-- Edit Event Form
-<section class="contact-us fly">
-    <div class="contact">
-        <h2>Edit Event</h2>
-        <form id="editForm" method="post" action="{{ url_for('add') }}">
-    <select id="editSelect" required>
-        <option value="">-- Select Event to Edit --</option>
-        {% for e in events %}
-            <option value="{{ e.id }}">{{ e.name }} ({{ e.date }})</option>
-        {% endfor %}
-    </select>
-    <input type="text" id="editName" name="name" placeholder="Event name" required>
-    <input type="date" id="editDate" name="date" required>
-    <input type="text" id="editLocation" name="location" placeholder="Location" required>
-    <input type="text" id="editDescription" name="description" placeholder="Description">
-    <input type="hidden" name="old_id" id="old_id" value="">
-    <button type="submit" class="edit-button">Edit Event</button>
-</form>
-    </div>
-</section>
- -->
-
-<!-- Add Sub-Event Form -->
 <section class="contact-us fly">
     <div class="contact">
         <h2>Add Sub-Events</h2>
@@ -122,7 +96,6 @@
     </div>
 </section>
 
-<!-- View Sub-Events -->
 <section class="table">
     <select id="main_event">
       <option value="">-- Select Event --</option>
@@ -135,7 +108,6 @@
     </div>
 </section>
 
-<!-- Edit Sub-Event Form -->
 <section class="contact-us fly">
     <div class="contact">
         <h2>Edit Sub-Event</h2>
@@ -146,11 +118,9 @@
                     <option value="{{ e.id }}">{{ e.name }} ({{ e.date }})</option>
                 {% endfor %}
             </select>
-
             <select id="editSubSelect" required>
                 <option value="">-- Select Sub-Event --</option>
             </select>
-
             <input type="hidden" name="sub_id" id="sub_id" value="">
             <input type="hidden" name="event_id" id="sub_event_id" value="">
             <input type="text" name="name" placeholder="Sub-event name" required>
@@ -158,13 +128,11 @@
             <input type="number" name="num_participants" placeholder="No. of Participants">
             <input type="text" name="participants" placeholder="Names of Participants">
             <input type="text" name="teacher" placeholder="Teacher in Charge">
-
             <button type="submit" class="edit-button">Edit Sub-Event</button>
         </form>
     </div>
 </section>
 
-<!-- Auth Modal -->
 <div id="authOverlay" style="display: {% if not username %}flex{% else %}none{% endif %};
     position: fixed; top:0; left:0; width:100%; height:100%;z-index:1000; align-items:center; justify-content:center;">
     <div style="padding:25px; border-radius:12px; width:350px; text-align:center;">
@@ -190,7 +158,6 @@ function openAuthModal() {
 }
 </script>
 
-<!-- Event Edit Script -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const jsEvents = {{ events | tojson | safe }} || [];
@@ -213,7 +180,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         const event = jsEvents.find(ev => parseInt(ev.id) === selectedId);
         if (!event) return;
-
         editName.value = event.name || '';
         editDate.value = event.date || '';
         editLocation.value = event.location || '';
@@ -223,7 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<!-- Sub-Event View Script -->
 <script>
 document.getElementById("main_event").addEventListener("change", function() {
     const eventId = this.value;
@@ -232,7 +197,6 @@ document.getElementById("main_event").addEventListener("change", function() {
         subDiv.innerHTML = "<p>No event selected</p>";
         return;
     }
-
     fetch(`/get_sub_events/${eventId}`)
         .then(res => res.json())
         .then(data => {
@@ -270,7 +234,6 @@ document.getElementById("main_event").addEventListener("change", function() {
 });
 </script>
 
-<!-- Edit Sub-Event Script -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
     const editSubEventSelect = document.getElementById("editSubEventSelect");
@@ -281,7 +244,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const eventId = editSubEventSelect.value;
         editSubSelect.innerHTML = '<option value="">-- Select Sub-Event --</option>';
         if (!eventId) return;
-
         fetch(`/get_sub_events/${eventId}`)
             .then(res => res.json())
             .then(data => {
