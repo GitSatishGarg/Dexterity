@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, session, url_for, jsonify
-import database
+import database as database
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"

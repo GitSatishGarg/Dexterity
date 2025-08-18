@@ -451,3 +451,26 @@ select{
     background: #263E9D;
     color: white;
 }
+
+.export-btn{
+    outline: none;
+    box-sizing: border-box;
+    border-radius: 10px;
+    color: #263E9D;
+    border: 1px solid #263E9D;
+    background: none;
+    width: 200px;
+    height: 50px;
+    transition: all 0.2s ease-in-out;
+    margin-top: 1rem;
+}
+
+.export-btn{
+    box-shadow: 0 0 15px #263E9D;
+}
+
+.export-btn{
+    background: #263E9D;
+    color: white;
+}
+

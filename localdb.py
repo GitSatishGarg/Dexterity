@@ -74,17 +74,21 @@ def add_event(username, name, date, location, description):
         conn.commit()
 
 
-def get_all_events(username):
-    create_user_events_table(username)
-    table = f"events_{username}"
+def get_all_events(username=None):
     with sqlite3.connect(DB_NAME, timeout=10) as conn:
         c = conn.cursor()
-        c.execute(f"SELECT id, name, date, location, description FROM {table}")
+
+        if username:
+            table_name = f"{username}_events"
+            c.execute(f"SELECT * FROM {table_name}")
+        else:
+            # fallback: show from a global events table
+            c.execute("SELECT * FROM events")
+
         rows = c.fetchall()
-    return [
-        {"id": r[0], "name": r[1], "date": r[2], "location": r[3], "description": r[4]}
-        for r in rows
-    ]
+        conn.close()
+        return rows
+
 
 
 def delete_event(username, event_id):

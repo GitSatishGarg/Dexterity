@@ -75,6 +75,9 @@
                     </tr>
                 {% endif %}
             </table>
+
+            <button onclick="exportTableToCSV('eventsTable', 'events.csv')" class="export-btn">Export Events to CSV</button>
+
         </div>
     </section>
 
@@ -131,6 +134,9 @@
         <div id="sub_event_list" style="margin-top:15px;">
         <p>No event selected</p>
         </div>
+
+         <button onclick="exportSubEventsCSV()" class="export-btn">Export Sub-Events to CSV</button>
+    
     </section>
 
     <section class="contact-us fly">
@@ -176,6 +182,55 @@
             </form>
         </div>
     </div>
+
+    <script>
+function downloadCSV(csv, filename) {
+    const csvFile = new Blob([csv], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(csvFile);
+    link.download = filename;
+    link.click();
+}
+
+function exportTableToCSV(tableId, filename) {
+    const rows = document.querySelectorAll(`#${tableId} tr`);
+    let csv = [];
+
+    rows.forEach(row => {
+        let cols = row.querySelectorAll("td, th");
+        let rowData = [];
+        cols.forEach(col => {
+            // Escape quotes
+            rowData.push('"' + col.innerText.replace(/"/g, '""') + '"');
+        });
+        csv.push(rowData.join(","));
+    });
+
+    downloadCSV(csv.join("\n"), filename);
+}
+
+function exportSubEventsCSV() {
+    const subTable = document.querySelector("#sub_event_list table");
+    if (!subTable) {
+        alert("No sub-events table to export.");
+        return;
+    }
+    const rows = subTable.querySelectorAll("tr");
+    let csv = [];
+
+    rows.forEach(row => {
+        let cols = row.querySelectorAll("td, th");
+        let rowData = [];
+        cols.forEach(col => {
+            rowData.push('"' + col.innerText.replace(/"/g, '""') + '"');
+        });
+        csv.push(rowData.join(","));
+    });
+
+    downloadCSV(csv.join("\n"), "sub_events.csv");
+}
+</script>
+
 
     <script>
         function openAuthModal() {
