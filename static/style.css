@@ -260,6 +260,47 @@ h4 {
     color: lightgray;
     margin-top: 5rem;
     margin-bottom: 5rem;
+    overflow-x: auto; /* enables horizontal scrolling on small screens */
+}
+
+/* Ensure table adapts */
+.table table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* prevents content from squishing too much */
+}
+
+.table th,
+.table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ccc;
+    word-wrap: break-word;
+}
+
+/* On smaller screens */
+@media (max-width: 768px) {
+    .table {
+        width: 95%;
+    }
+
+    .table table {
+        font-size: 14px;
+    }
+
+    .table th,
+    .table td {
+        padding: 8px;
+    }
+}
+
+/* On very small screens, allow scrolling */
+@media (max-width: 500px) {
+    .table table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
 }
 
 .contact form {

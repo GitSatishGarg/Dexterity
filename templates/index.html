@@ -44,8 +44,8 @@
     </section>
 
         <section class="table">
-        <div>
-            <table id="events_table" width="100%" cellpadding="10" cellspacing="0" border="1">
+        <div class="table-responsive">
+            <table id="events_table" cellpadding="10" cellspacing="0" border="1">
                 <tr>
                     <th>ID</th>
                     <th>Name</th>
@@ -127,6 +127,7 @@
     </section>
 
     <section class="table">
+        <div class="table-responsive">
         <select id="main_event">
         <option value="">-- Select Event --</option>
         {% for event in events %}
@@ -138,7 +139,7 @@
         </div>
 
          <button onclick="exportSubEventsCSV()" class="export-btn">Export Sub-Events to CSV</button>
-    
+        </div>
     </section>
 
     <section class="contact-us fly">
