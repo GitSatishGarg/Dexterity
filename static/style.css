@@ -260,14 +260,13 @@ h4 {
     color: lightgray;
     margin-top: 5rem;
     margin-bottom: 5rem;
-    overflow-x: auto; /* enables horizontal scrolling on small screens */
+    overflow-x: auto;
 }
 
-/* Ensure table adapts */
 .table table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px; /* prevents content from squishing too much */
+    min-width: 600px;
 }
 
 .table th,
@@ -278,7 +277,6 @@ h4 {
     word-wrap: break-word;
 }
 
-/* On smaller screens */
 @media (max-width: 768px) {
     .table {
         width: 95%;
@@ -294,7 +292,7 @@ h4 {
     }
 }
 
-/* On very small screens, allow scrolling */
+
 @media (max-width: 500px) {
     .table table {
         display: block;
@@ -307,7 +305,7 @@ h4 {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    align-items: stretch; /* ensures all children have same height */
+    align-items: stretch;
 }
 
 .contact form input[type="text"],
@@ -318,7 +316,7 @@ h4 {
 }
 
 .contact form .submit-button {
-    flex: 0 0 auto; /* keeps button size fixed */
+    flex: 0 0 auto; 
     margin: 0;
 }
 
@@ -352,9 +350,9 @@ h4 {
     margin: 0 0 15px 0;
     padding: 15px;
     width: 100%;    
-    height: 50px;      /* same height for inputs and button */
+    height: 50px;   
     box-sizing: border-box;
-    margin: 0;          /* remove any extra spacing */
+    margin: 0;        
     vertical-align: middle;
     border: 1px solid lightgray;
     background: none;
@@ -366,9 +364,9 @@ select{
     outline: none;
     margin: 0 0 15px 0;
     padding: 15px;   
-    height: 50px;      /* same height for inputs and button */
+    height: 50px;   
     box-sizing: border-box;
-    margin: 0;          /* remove any extra spacing */
+    margin: 0; 
     vertical-align: middle;
     border: 1px solid lightgray;
     background: #263E9D;
@@ -420,13 +418,13 @@ select{
 }
 
 .delete-btn, .edit-btn {
-    padding: 10px 20px;      /* smaller padding */
+    padding: 10px 20px;
     border: none;
     border-radius: 8px;
     cursor: pointer;
     display: inline-block;
-    font-size: 14px;        /* optional, smaller font */
-    line-height: 1;         /* removes extra line spacing */
+    font-size: 14px;      
+    line-height: 1;    
     transition: all 0.4s ease-in-out;
     margin: auto;
 }
@@ -463,9 +461,9 @@ select{
     margin: 0 0 15px 0;
     padding: 15px;
     width: 100%;    
-    height: 50px;      /* same height for inputs and button */
+    height: 50px;   
     box-sizing: border-box;
-    margin: 0;          /* remove any extra spacing */
+    margin: 0;     
     vertical-align: middle;
     border: 1px solid lightgray;
     background: none;
